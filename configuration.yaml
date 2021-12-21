@@ -27,7 +27,7 @@ sonoff:
     password: !secret ewelinkapp
     reload: always  # update device list every time HA starts
     force_update: [temperature, power]
-    scan_interval: '00:0:02'  # (optional) default 5 minutes
+    scan_interval: '00:0:03'  # (optional) default 5 minutes
     sensors: [temperature, humidity, power, current, voltage]
   
 
@@ -89,6 +89,14 @@ sensor:
     entity_id: sensor.internet_speed_out
     max_age:
         hours: 12
+    ##
+  - platform: snmp
+    name: 'num_of_wireless_connected_clients'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6
+    community: 'public'
+    version: '2c' 
+
     
 input_number:
     internet_delta_in:
@@ -101,8 +109,13 @@ input_number:
         min: 0
         max: 1000000000000
         mode: slider
+    num_clients_wifi:
+        initial: 0
+        min: 0
+        max: 100
+        mode: slider
 #  monitoramento SNMP roteador
-    
+
 ############################################
 ### INTEGRAÇÃO BROADLINK
 ############################################
@@ -139,7 +152,7 @@ switch:
 ############################################
 telegram_bot:
   - platform: polling
-    api_key: "1240487662:AAGOgH0rc25oczICcrlwI9YYMx0bzV0WEOw"
+    api_key: !secret telegramtoken 
     allowed_chat_ids:
       - 220034727 # example: 123456789 for the chat_id of a user
 
@@ -148,3 +161,47 @@ notify:
   - platform: telegram
     name: NOTIFIER_MARCO
     chat_id: 220034727
+
+light:
+  - platform: group
+    name: Todas as luzes
+    entities:
+      #- switch.sonoff_1000913b99
+      #- switch.sonoff_1000755706
+      - light.sonoff_10012bf028
+      - light.sonoff_10012ba9da
+      - light.sonoff_10012be809
+      - light.suite
+      - light.sonoff_10010acddd
+      
+############################################
+### CÂMERAS
+############################################    
+camera:     
+  - platform: generic
+    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=4&subtype=0"
+    name: frente
+    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
+    username: !secret dvr_user
+    password: !secret dvr_pass
+
+  - platform: generic
+    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=1&subtype=0"
+    name: fundos
+    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
+    username: !secret dvr_user
+    password: !secret dvr_pass
+
+  - platform: generic
+    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=3&subtype=0"
+    name: lateral
+    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
+    username: !secret dvr_user
+    password: !secret dvr_pass
+  
+  - platform: generic
+    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=2&subtype=0"
+    name: garagem
+    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
+    username: !secret dvr_user
+    password: !secret dvr_pass
