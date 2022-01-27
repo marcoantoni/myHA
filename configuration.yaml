@@ -1,4 +1,3 @@
-
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
@@ -6,6 +5,7 @@ default_config:
 tts:
   - platform: google_translate
 
+switch: !include switch.yaml
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
@@ -28,10 +28,8 @@ sonoff:
     reload: always  # update device list every time HA starts
     force_update: [temperature, power]
     scan_interval: '00:0:03'  # (optional) default 5 minutes
-    sensors: [temperature, humidity, power, current, voltage]
-  
-
-
+    sensors: [temperature, humidity]
+ 
 ############################################
 ### SENSORES
 ############################################
@@ -96,7 +94,6 @@ sensor:
     baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6
     community: 'public'
     version: '2c' 
-
     
 input_number:
     internet_delta_in:
@@ -116,36 +113,6 @@ input_number:
         mode: slider
 #  monitoramento SNMP roteador
 
-############################################
-### INTEGRAÇÃO BROADLINK
-############################################
-switch:
-  - platform: broadlink
-    mac: 'EC:0B:AE:3D:DB:A3'
-    switches:
-      # comandos receptor digital
-      - name: "Receptor"
-        command_on: 'JgBIAAABJJYRFBEUERQQFREVDxYQFhAWDjoROBE5ExMQOhA6EDoPOxAUERQSORA6EDkRFRA6EBYPOhA5EBYQFBEWDzoQFg85EQANBQ=='
-        command_off: 'JgBIAAABJJYRFBEUERQQFREVDxYQFhAWDjoROBE5ExMQOhA6EDoPOxAUERQSORA6EDkRFRA6EBYPOhA5EBYQFBEWDzoQFg85EQANBQ=='
-      - name: "receptor_volume_up"
-        command_on: 'JgBIAAABJpMUEhEUERQRFBMSEhQRFBITEzcSOBE5ERQROBI4EzgSOBEUETkROBIUETkSExE4ExMTNxITEhMUNhITEzYTExQ1FAANBQ=='
-      - name: "receptor_volume_down"
-        command_on: 'JgBIAAABJpQRFBEVEBUQFBIUERUQFRAVETgRORE5EBYPOhA6ETkRORE4EhQPOxAVEDkRFRE5EBUSFBA6EBUQOBIVDjsRFRA5EgANBQ=='
-        
-      - name: "receptor_channel_up"
-        command_on: 'JgBIAAABJZURFRETEhQRFBEVDxURFBEUETkSNxI5EhITORA5ETkRORE5ERQROBE5ETkRFRA6ERQSExI4ERQSFBAVEDkTExA4EgANBQ=='
-      - name: "receptor_channel_down"
-        command_on: 'JgBQAAABJJYRFBEVEBUPFg8WERQRFRAUETkRORE4EhUPOxA5EDkSOBE5EjgQOhA7EDkQFRAWDxURFRAWDxURFBAVEjcSOhE4EAAFdAABJUwQAA0F'
-      - name: "receptor_mute"
-        command_on: 'JgBQAAABJJYRFBAVERUQFBIUDxYPFRIUETkQOhE3ExQQOhA5EToQORAWDzoQOhA6EDoQFhAUERUQOREUEhUPFBEWEDoPOhA5EgAFcgABJ0oRAA0F'
-      - name: "receptor_info"
-        command_on: 'JgBIAAABI5USFREUEBQTFBAVERQQFg8WEDoPOhE4EhUQOBI5EDoQORAWEBUQOREVERQRFBA6EBYQORA5ERUQPA86DzoPFhE5EAANBQ=='
-      - name: "receptor_home"
-        command_on: 'JgBIAAABIpYRFBAXDxUSFQ4VEBUTEhEVETkQOhA5ERYQOBI4ETgSORAVEhMRFRAWDzkRFBEVERUPORE5ETkROREWDzoRORE4EgANBQ=='
-        
-      - name: "TV da Sala"
-        command_on: 'JgBQAAABJJQSExITEhMSExITEhISExITEjgSEhM3EjgSOBI3EhMSOBI3ExMRExITEhMSExISEhMSExI4EjcSOBI4EjgROBI4EgAFaAABJksSAA0F'
-        command_off: 'JgBQAAABJJQSExITEhMSExITEhISExITEjgSEhM3EjgSOBI3EhMSOBI3ExMRExITEhMSExISEhMSExI4EjcSOBI4EjgROBI4EgAFaAABJksSAA0F'
 
 ############################################
 ### INTEGRAÇÃO TELEGRAM
@@ -166,8 +133,6 @@ light:
   - platform: group
     name: Todas as luzes
     entities:
-      #- switch.sonoff_1000913b99
-      #- switch.sonoff_1000755706
       - light.sonoff_10012bf028
       - light.sonoff_10012ba9da
       - light.sonoff_10012be809
@@ -205,3 +170,23 @@ camera:
     still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
     username: !secret dvr_user
     password: !secret dvr_pass
+    
+    
+smartir:
+
+climate:
+  - platform: smartir
+    name: Ar condicionado
+    unique_id: consul_quarto
+    device_code: 1241
+    controller_data: remote.rm4_mini_remote
+    #temperature_sensor: sensor.temperature
+    #humidity_sensor: sensor.humidity
+    #power_sensor: binary_sensor.ac_power
+    
+    # Example configuration.yaml entry
+#binary_sensor:
+#  - platform: ping
+#    host: 192.168.1.34
+#    name: next-fx
+#    scan_interval: 30

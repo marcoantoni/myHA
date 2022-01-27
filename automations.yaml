@@ -52,7 +52,7 @@
   - service: switch.turn_on
     data: {}
     target:
-      entity_id: switch.1000913b99
+      entity_id: switch.sonoff_1000913b99
   mode: single
 - id: '1604098762827'
   alias: Ligar luz na chegada - Lucimara
@@ -118,7 +118,7 @@
   action:
   - service: light.turn_on
     target:
-      entity_id: light.sala
+      device_id: 641b2f7d95bb5200021d5eb427535f00
   mode: single
 - id: '1638829261321'
   alias: Aquário/aumentar brilho - 16h:50min
@@ -290,15 +290,14 @@
   action:
   - service: light.turn_off
     target:
-      device_id: 98eb287b2dfa11be82700d8f7b5d2a7a
-      entity_id: light.sala
+      device_id: 641b2f7d95bb5200021d5eb427535f00
   mode: single
 - id: '1638901341382'
   alias: Aquário/aquecedor - ligar
-  description: Temperatura < 28º
+  description: Temperatura < 29º
   trigger:
   - platform: numeric_state
-    below: '28'
+    below: '29'
     entity_id: sensor.sonoff_1000af0421_temperature
   condition: []
   action:
@@ -308,11 +307,11 @@
   mode: single
 - id: '1638901426110'
   alias: Aquário/aquecedor - desligar
-  description: Temperatura > 27.9º
+  description: Temperatura > 29º
   trigger:
   - platform: numeric_state
     entity_id: sensor.sonoff_1000af0421_temperature
-    above: '27.9'
+    above: '29'
   condition: []
   action:
   - service: switch.turn_off
@@ -362,4 +361,44 @@
     data:
       message: 'A umidade relativa do ar está acima de 50%. '
       title: Alerta de umidade do ar
+  mode: single
+- id: '1640121972039'
+  alias: Notificação - temperatura do aquário acima de 29,5º
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.sonoff_1000af0421_temperature
+    above: '29.5'
+  condition: []
+  action:
+  - service: notify.notifier_marco
+    data:
+      title: Temperatura do aquário
+      message: A temperatura da água está acima de 29º graus.
+  mode: single
+- id: '1642177946231'
+  alias: Umidificador - desligar
+  description: Desligar umidificador quando umidade > 50%
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.rm4_pro_humidity
+    above: '50'
+  condition: []
+  action:
+  - service: switch.turn_off
+    target:
+      entity_id: switch.sonoff_10005f57ee
+  mode: single
+- id: '1642178110306'
+  alias: Umidificador - ligar
+  description: Ligar umidificador quando umidade < 50%
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.rm4_pro_humidity
+    below: '50'
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.sonoff_10005f57ee
   mode: single
