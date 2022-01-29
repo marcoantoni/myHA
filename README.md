@@ -10,6 +10,7 @@
 - 1 lâmpada [Yeelight RGB](vhttps://pt.aliexpress.com/item/32885328641.html?gatewayAdapt=glo2bra&spm=a2g0o.9042311.0.0.2742b90aGm32Rz) 
 - 1 lâmpada [Philips/Xiaomi](https://pt.aliexpress.com/item/32853967773.html?gatewayAdapt=glo2bra&spm=a2g0o.9042311.0.0.2742b90awXatLR)
 - 4 lâmpadas [RGB Sonoff B05-B-A60](https://pt.aliexpress.com/item/1005002061178114.html?gatewayAdapt=glo2bra&spm=a2g0o.9042311.0.0.2742b90aP3fL4w) - comprei barato a lampada, mas tem alguns problemas: 1) não permite ligar em estado **desligado**. 2) Ao ligar a torneira elétrica, a lampada "enfraquece".
+- 1 chromecast de 2ª geração (afinal, a TV não é smart)
 
 ## Componetes utilizados
 Componentes instalados manualmente, dentro da pasta ``config\custom_components``
