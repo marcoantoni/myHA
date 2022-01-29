@@ -371,34 +371,8 @@
     above: '29.5'
   condition: []
   action:
-  - service: notify.notifier_marco
+  - service: notify.mobile_app_redmi_note_8_pro
     data:
-      title: Temperatura do aquário
-      message: A temperatura da água está acima de 29º graus.
-  mode: single
-- id: '1642177946231'
-  alias: Umidificador - desligar
-  description: Desligar umidificador quando umidade > 50%
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.rm4_pro_humidity
-    above: '50'
-  condition: []
-  action:
-  - service: switch.turn_off
-    target:
-      entity_id: switch.sonoff_10005f57ee
-  mode: single
-- id: '1642178110306'
-  alias: Umidificador - ligar
-  description: Ligar umidificador quando umidade < 50%
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.rm4_pro_humidity
-    below: '50'
-  condition: []
-  action:
-  - service: switch.turn_on
-    target:
-      entity_id: switch.sonoff_10005f57ee
+      title: Atenção
+      message: A temperatura do aquário está acima de 29,5º
   mode: single

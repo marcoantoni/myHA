@@ -94,7 +94,7 @@ sensor:
     baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6
     community: 'public'
     version: '2c' 
-    
+  
 input_number:
     internet_delta_in:
         initial: 0
@@ -173,7 +173,6 @@ camera:
     
     
 smartir:
-
 climate:
   - platform: smartir
     name: Ar condicionado
@@ -183,10 +182,45 @@ climate:
     #temperature_sensor: sensor.temperature
     #humidity_sensor: sensor.humidity
     #power_sensor: binary_sensor.ac_power
+
+  - platform: generic_thermostat
+    unique_id: termonstato_aquario
+    name: termonstato_aquario
+    heater: switch.sonoff_1000af0421
+    target_sensor: sensor.sonoff_1000af0421_temperature
+    min_temp: 27
+    max_temp: 31
+    precision: 0.1
+    cold_tolerance: 0.1 
+    hot_tolerance: 0
+    target_temp: 29
+    min_cycle_duration:
+      seconds: 30
     
-    # Example configuration.yaml entry
+   
+generic_hygrostat:
+  - name: Umidificador
+    humidifier: switch.sonoff_10005f57ee
+    target_sensor: sensor.rm4_pro_humidity
+    min_humidity: 30
+    max_humidity: 70
+    target_humidity: 50
+    dry_tolerance: 3
+    wet_tolerance: 0
+    device_class: "humidifier"
+    min_cycle_duration:
+      seconds: 30
+    keep_alive:
+      minutes: 3
+    initial_state: true
+    away_humidity: 35
+    away_fixed: True
+    sensor_stale_duration: 00:15:00
 #binary_sensor:
 #  - platform: ping
 #    host: 192.168.1.34
 #    name: next-fx
 #    scan_interval: 30
+
+
+
