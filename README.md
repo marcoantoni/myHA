@@ -32,5 +32,5 @@ Componentes instalados manualmente, dentro da pasta ``config\custom_components``
 - [Obtendo o tráfego da WAN do Roteador via SNMP](https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92) 
 
 ## Interface em 29/01/2022
-![Alt text](print.png?raw=true "Title")
+![Alt text](print30-01-22.png?raw=true "Title")
 
