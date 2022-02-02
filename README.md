@@ -21,6 +21,7 @@ Componentes instalados manualmente, dentro da pasta ``config\custom_components``
 - [button-card.js](https://github.com/custom-cards/button-card)
 - [mini-graph-card-bundle.js](https://github.com/kalkih/mini-graph-card)
 - [simple-weather-card-bundle.js](https://github.com/kalkih/simple-weather-card)
+- [mini-media-player-bundle.js](https://github.com/kalkih/mini-media-player)
 
 ## Integrações utilizadas
 - ``smartir`` permite controlar dispositivos via IR (ex: ar condicionado)
