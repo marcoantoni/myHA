@@ -17,6 +17,7 @@ Componentes instalados manualmente, dentro da pasta ``config\custom_components``
 - [Sonoff Lan](https://github.com/AlexxIT/SonoffLAN) - Não precisa trocar o firmware dos Sonoffs 
 - [SmartIR](https://github.com/smartHomeHub/SmartIR) - Permite controlar dispositivos, como ar condicionado via IR
 - [WebRTC](https://github.com/AlexxIT/WebRTC) - Zera o delay para visualização das câmeras via RTSP
+- [MikrotikRouter](https://github.com/tomaae/homeassistant-mikrotik_router) - Permite obter informações de roteadores Mikrotik. **Não confundir com a integração nativa do Home Assistant**
 ## Cards Lovelave
 - [button-card.js](https://github.com/custom-cards/button-card)
 - [mini-graph-card-bundle.js](https://github.com/kalkih/mini-graph-card)
