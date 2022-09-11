@@ -1,0 +1,321 @@
+views:
+  - title: Home
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:simple-weather-card
+            entity: weather.openweathermap
+            name: em casa
+            backdrop:
+              day: var(--primary-color)
+              night: '#40445a'
+            primary_info:
+              - wind_bearing
+              - humidity
+            secondary_info:
+              - precipitation
+              - precipitation_probability
+          - type: horizontal-stack
+            cards:
+              - type: picture-elements
+                image: /local/marco.jpg
+                elements:
+                  - entity: sensor.celular_marco_battery_level
+                    style:
+                      color: white
+                      font-size: 1.4em
+                      left: 10%
+                      top: 89%
+                    type: state-icon
+                  - entity: sensor.celular_marco_battery_level
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 28%
+                      top: 90%
+                    type: state-label
+                  - entity: person.marco_antoni
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 78%
+                      top: 90%
+                    type: state-label
+              - type: picture-elements
+                image: /local/lucimara.jpg
+                elements:
+                  - entity: sensor.celular_lucimara_battery_level
+                    style:
+                      color: white
+                      font-size: 1.4em
+                      left: 10%
+                      top: 89%
+                    type: state-icon
+                  - entity: sensor.celular_lucimara_battery_level
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 28%
+                      top: 90%
+                    type: state-label
+                  - entity: person.lucimara
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 78%
+                      top: 90%
+                    type: state-label
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Iluminação
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10012bf028
+                show_state: true
+                icon_height: 30px
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10012be809
+                icon_height: 30px
+                show_state: true
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: switch.sonoff_1000913b99
+                icon: mdi:lightbulb
+                show_state: true
+                icon_height: 30px
+          - type: horizontal-stack
+            cards:
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10010acddd
+                show_state: true
+                icon_height: 30px
+                name: Esc. Marco
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.aquario
+                show_state: true
+                icon_height: 30px
+                name: Esc. Lucimara
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10012ba9da
+                icon_height: 30px
+                show_state: true
+                name: Visitas
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.yeelight_color_0x7d44584
+                name: Suíte
+                show_state: true
+                icon_height: 30px
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Sala
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_temperature
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_humidity
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+          - type: custom:button-card
+            entity: switch.sonoff_100049e5fc
+            name: Multimídia
+            show_label: true
+            state:
+              - color: green
+                icon: mdi:lightning-bolt
+                label: Ligado
+                operator: template
+                styles:
+                  label:
+                    - color: green
+                    - font-size: 14px
+                value: >
+                  [[[ return states['switch.sonoff_100049e5fc'].state === 'on'
+                  ]]]
+              - color: red
+                label: Desligado
+                operator: default
+                styles:
+                  label:
+                    - color: red
+                    - font-size: 14px
+            styles:
+              card:
+                - height: 65px
+                - filter: opacity(85%)
+              label:
+                - font-size: 18px
+              name:
+                - font-weight: 500
+                - font-size: 16px
+          - type: custom:mini-media-player
+            entity: media_player.chromecast6337
+            group: false
+            volume_stateless: true
+            toggle_power: true
+            artwork: material
+            source: full
+            sound_mode: full
+            info: scroll
+            replace_mute: play_stop
+          - show_name: false
+            show_icon: true
+            show_state: false
+            entities:
+              - entity: switch.subwoofer_ligar
+                icon: mdi:power
+                name: ' '
+              - entity: switch.subwoofer_bluetooth
+                icon: mdi:bluetooth
+                name: ' '
+              - entity: switch.subwoofer_volume_mais
+                icon: mdi:volume-plus
+                name: ' '
+              - entity: switch.subwoofer_fm
+                icon: mdi:radio-fm
+                name: ' '
+              - entity: switch.subwoofer_av
+                icon: mdi:audio-input-rca
+                name: ' '
+              - entity: switch.subwoofer_volume_menos
+                icon: mdi:volume-minus
+                name: ' '
+            title: Subwoofer
+            type: glance
+            state_color: false
+            columns: 3
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Aquário
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - show_name: true
+            type: custom:slider-button-card
+            entity: switch.sonoff_1000755706
+            show_state: true
+            name: Iluminação
+            background: gradient
+            slider:
+              direction: left-right
+              background: gradient
+              use_state_color: true
+            action_button:
+              mode: toggle
+            compact: true
+            icon:
+              use_state_color: true
+              show: true
+              icon: mdi:ceiling-light
+          - type: horizontal-stack
+            cards:
+              - type: thermostat
+                entity: climate.termonstato_aquario
+                name: Termostado
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.sonoff_1000af0421_temperature
+                name: Últimas 12 horas
+                points: false
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                hours_to_show: 12
+                show:
+                  labels: false
+                  extrema: true
+                color_thresholds:
+                  - value: 26
+                    color: '#2112f3'
+                  - color: '#12c2f3'
+                  - color: '#12f34a'
+                  - color: '#f3b712'
+                  - value: 30
+                    color: '#ff0000'
+          - type: humidifier
+            entity: humidifier.umidificador
+            name: Umidificador
+      - type: vertical-stack
+        cards:
+          - entities:
+              - color: '#00B0FF'
+                entity: sensor.internet_speed_in
+              - color: '#76FF03'
+                entity: sensor.internet_speed_out
+            font_size: 80
+            line_width: 1
+            points_per_hour: 60
+            name: Uso da Internet
+            show:
+              extrema: true
+              fill: false
+            type: custom:mini-graph-card
+          - type: entities
+            entities:
+              - entity: binary_sensor.wa850re
+                name: Repetidor de internet
+              - entity: binary_sensor.rpi_power_status
+              - entity: sensor.wireless_connected_clients_2g
+                name: Dispositivos conectados em 2.4Ghz
+                icon: mdi:numeric
+                secondary_info: last-changed
+              - entity: sensor.wireless_connected_clients_5g
+                secondary_info: last-changed
+                name: Dispositivos conectados em 5.8Ghz
+                icon: mdi:numeric

@@ -13,17 +13,16 @@
       title: Alerta de umidade do ar
   mode: single
 - id: '1602703592390'
-  alias: Noticação inicialização
+  alias: 'Notificação: inicialização'
   description: ''
   trigger:
   - platform: homeassistant
     event: start
   condition: []
   action:
-  - service: notify.mobile_app_redmi_note_8_pro
+  - service: notify.mobile_app_celular_marco
     data:
-      message: Home assistant foi iniciado
-      title: Home assistant
+      message: O home assistant foi iniciado
   mode: single
 - id: '1602764696297'
   alias: ' Notificação chegada - Lucimara '
@@ -93,237 +92,13 @@
   action:
   - service: script.desligar_luzes_de_fora
   mode: single
-- id: '1637469520606'
-  alias: Desligar segunda lampada da sala de jantar
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: light.sonoff_10012be809
-  condition:
-  - condition: time
-    after: 07:00
-    before: '19:30'
-  action:
-  - service: light.turn_off
-    target:
-      entity_id: light.sonoff_10012be809
-  mode: single
-- id: '1638829179505'
-  alias: Aquário/ligar luz - 16h:30
-  description: ''
-  trigger:
-  - platform: time
-    at: '16:30'
-  condition: []
-  action:
-  - service: light.turn_on
-    target:
-      device_id: 641b2f7d95bb5200021d5eb427535f00
-  mode: single
-- id: '1638829261321'
-  alias: Aquário/aumentar brilho - 16h:50min
-  description: ''
-  trigger:
-  - platform: time
-    at: '16:50'
-  condition: []
-  action:
-  - service: script.1638484346637
-  mode: single
-- id: '1638829311688'
-  alias: Aquário/aumentar brilho - 17h:10min
-  description: ''
-  trigger:
-  - platform: time
-    at: '17:10'
-  condition: []
-  action:
-  - service: script.1638484346637
-  mode: single
-- id: '1638829385880'
-  alias: Aquário/aumentar brilho - 17h:30min
-  description: ''
-  trigger:
-  - platform: time
-    at: '17:30'
-  condition: []
-  action:
-  - service: script.1638484346637
-  mode: single
-- id: '1638829407275'
-  alias: Aquário/diminuir brilho - 20h:50min
-  description: ''
-  trigger:
-  - platform: time
-    at: '20:50'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829432435'
-  alias: Aquário/aumentar brilho - 18h:10min
-  description: ''
-  trigger:
-  - platform: time
-    at: '18:10'
-  condition: []
-  action:
-  - service: script.1638484346637
-  mode: single
-- id: '1638829452025'
-  alias: Aquário/aumentar brilho - 18h:30min
-  description: ''
-  trigger:
-  - platform: time
-    at: '18:30'
-  condition: []
-  action:
-  - service: script.1638484346637
-  mode: single
-- id: '1638829714945'
-  alias: Aquário/diminuir brilho - 21h:00min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:00'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829730569'
-  alias: Aquário/diminuir brilho - 21h:10min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:10'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829749185'
-  alias: Aquário/diminuir brilho - 21h:20min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:20'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829762801'
-  alias: Aquário/diminuir brilho - 21h:30min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:30'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829762801'
-  alias: Desligar luz do aquário - 21h:40min - diminuir brilho
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:40'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829804738'
-  alias: Aquário/diminuir brilho - 21h:40min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:40'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829822155'
-  alias: Aquário/diminuir brilho - 21h:50min
-  description: ''
-  trigger:
-  - platform: time
-    at: '21:50'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829837128'
-  alias: Aquário/diminuir brilho - 22h
-  description: ''
-  trigger:
-  - platform: time
-    at: '22:00'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829862665'
-  alias: Aquário/diminuir brilho - 22h10min
-  description: ''
-  trigger:
-  - platform: time
-    at: '22:10'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638829875409'
-  alias: Aquário/diminuir brilho - 22h20min
-  description: ''
-  trigger:
-  - platform: time
-    at: '22:20'
-  condition: []
-  action:
-  - service: script.1638828286585
-  mode: single
-- id: '1638830071993'
-  alias: Aquário/desligar luz - 22h:30
-  description: ''
-  trigger:
-  - platform: time
-    at: '22:30'
-  condition: []
-  action:
-  - service: light.turn_off
-    target:
-      device_id: 641b2f7d95bb5200021d5eb427535f00
-  mode: single
-- id: '1638901341382'
-  alias: Aquário/aquecedor - ligar
-  description: Temperatura < 29º
-  trigger:
-  - platform: numeric_state
-    below: '29'
-    entity_id: sensor.sonoff_1000af0421_temperature
-  condition: []
-  action:
-  - service: switch.turn_on
-    target:
-      entity_id: switch.sonoff_1000af0421
-  mode: single
-- id: '1638901426110'
-  alias: Aquário/aquecedor - desligar
-  description: Temperatura > 29º
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.sonoff_1000af0421_temperature
-    above: '29'
-  condition: []
-  action:
-  - service: switch.turn_off
-    target:
-      entity_id: switch.sonoff_1000af0421
-  mode: single
 - id: '1639684900205'
   alias: Monitor WAN in
   description: ''
   trigger:
   - platform: state
-    entity_id: sensor.ether5_wan_in
+    entity_id:
+    - sensor.ether1_wan_in
   condition: []
   action:
   - service: input_number.set_value
@@ -338,7 +113,8 @@
   description: ''
   trigger:
   - platform: state
-    entity_id: sensor.ether5_wan_out
+    entity_id:
+    - sensor.ether1_wan_out
   condition: []
   action:
   - service: input_number.set_value
@@ -375,4 +151,58 @@
     data:
       title: Atenção
       message: A temperatura do aquário está acima de 29,5º
+  mode: single
+- id: '1656175213503'
+  alias: update temperature
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: '2'
+  action:
+  - service: homeassistant.update_entity
+    target:
+      entity_id: sensor.sonoff_1000af0421_temperature
+- id: '1657543576488'
+  alias: Ligar luz do aquário
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: '17'
+    minutes: '30'
+    seconds: '0'
+  condition: []
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      device_id: ebbc4ba6ac6cdf267b7de04a09e38b81
+  mode: single
+- id: '1657543632754'
+  alias: Desligar luz do aquário
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: '22'
+    minutes: '0'
+    seconds: '0'
+  condition: []
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.sonoff_1000755706
+  mode: single
+- id: '1660067646866'
+  alias: 'Notificação: saindo do IFRS'
+  description: ''
+  trigger:
+  - platform: zone
+    entity_id: person.marco_antoni
+    zone: zone.ifrs
+    event: leave
+  condition: []
+  action:
+  - service: notify.mobile_app_celular_lucimara
+    data:
+      message: Crocodillo está saindo do IF
   mode: single

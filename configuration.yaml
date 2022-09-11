@@ -1,21 +1,22 @@
-# Configure a default setup of Home Assistant (frontend, api, etc)
+
+# Loads default set of integrations. Do not remove.
 default_config:
 
 # Text to speech
 tts:
   - platform: google_translate
-
-switch: !include switch.yaml
-group: !include groups.yaml
+  
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
+switch: !include switch.yaml
 
 ############################################
 ### CONFIGURAÇÃO HTTPS
 ############################################
 http:
-    base_url: https://antoniha.duckdns.org
+    base_url: antoniha.duckdns.org
+    server_port: 8123
     ssl_certificate: /ssl/fullchain.pem
     ssl_key: /ssl/privkey.pem
     
@@ -24,11 +25,12 @@ http:
 ############################################
 sonoff:
     username: marco.antoni910@gmail.com
-    password: !secret ewelinkapp
-    reload: always  # update device list every time HA starts
-    force_update: [temperature, power]
-    scan_interval: '00:0:03'  # (optional) default 5 minutes
+    password: Micasa2018 #!secret ewelinkapp
+    force_update: [temperature]
+    scan_interval: '00:00:01'  # (optional) default 5 minutes
     sensors: [temperature, humidity]
+    mode: cloud
+    reload: always  # update device list every time HA starts
 ############################################
 ### SENSORES
 ############################################
@@ -49,16 +51,16 @@ sensor:
         status_marco:
             friendly_name: "Localização Marco"
             value_template: >-
-                {% if is_state('device_tracker.redmi_note_8_pro_2', 'driving') %}
+                {% if is_state('device_tracker.celular_marco', 'driving') %}
                     Dirigindo
-                {% elif is_state('device_tracker.redmi_note_8_pro_2', 'moving') %}
+                {% elif is_state('device_tracker.celular_marco', 'moving') %}
                     Caminhando
-                {% elif states.device_tracker.redmi_note_8_pro_2.attributes.place == home %}
+                {% elif states.device_tracker.celular_marco.attributes.place == home %}
                     Em casa
                 {% else %}
                     Ausente
                 {% endif %}
-            entity_id: device_tracker.redmi_note_8_pro_2
+            entity_id: device_tracker.celular_marco
         status_lucimara:
             friendly_name: "Localização Lucimara"
             value_template: >-
@@ -76,22 +78,29 @@ sensor:
 # monitoramento SNMP roteador
 # https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92
   - platform: snmp
-    name: 'ether5_wan_in'
+    name: 'ether1_wan_in'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.2.1.31.1.1.1.6.5
+    baseoid: 1.3.6.1.2.1.31.1.1.1.6.1
     community: 'public'
     version: '2c'
   - platform: snmp
-    name: 'ether5_wan_out'
+    name: 'ether1_wan_out'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.2.1.31.1.1.1.10.5
+    baseoid: 1.3.6.1.2.1.31.1.1.1.10.1
     community: 'public'
     version: '2c'
     
   - platform: snmp
-    name: 'wireless_connected_clients'
+    name: 'wireless_connected_clients_2g'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_5g'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.7
     community: 'public'
     version: '2c'
 
@@ -137,22 +146,6 @@ input_number:
         mode: slider
 #  fim monitoramento SNMP roteador
 
-
-############################################
-### INTEGRAÇÃO TELEGRAM
-############################################
-telegram_bot:
-  - platform: polling
-    api_key: !secret telegramtoken 
-    allowed_chat_ids:
-      - 220034727 # example: 123456789 for the chat_id of a user
-
-# notificações Marco
-notify:
-  - platform: telegram
-    name: NOTIFIER_MARCO
-    chat_id: 220034727
-
 light:
   - platform: group
     name: Todas as luzes
@@ -163,50 +156,7 @@ light:
       - light.suite
       - light.sonoff_10010acddd
       
-############################################
-### CÂMERAS
-############################################    
-camera:     
-  - platform: generic
-    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=4&subtype=0"
-    name: frente
-    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
-    username: !secret dvr_user
-    password: !secret dvr_pass
-
-  - platform: generic
-    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=1&subtype=0"
-    name: fundos
-    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
-    username: !secret dvr_user
-    password: !secret dvr_pass
-
-  - platform: generic
-    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=3&subtype=0"
-    name: lateral
-    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
-    username: !secret dvr_user
-    password: !secret dvr_pass
-  
-  - platform: generic
-    stream_source: "rtsp://marco:lolla2018@192.168.1.16/cam/realmonitor?channel=2&subtype=0"
-    name: garagem
-    still_image_url: "http://192.168.1.16/cgi-bin/snapshot.cgi"
-    username: !secret dvr_user
-    password: !secret dvr_pass
-    
-    
-smartir:
 climate:
-  - platform: smartir
-    name: Ar condicionado
-    unique_id: consul_quarto
-    device_code: 1241
-    controller_data: remote.rm4_mini_remote
-    #temperature_sensor: sensor.temperature
-    #humidity_sensor: sensor.humidity
-    #power_sensor: binary_sensor.ac_power
-
   - platform: generic_thermostat
     unique_id: termonstato_aquario
     name: termonstato_aquario
@@ -240,11 +190,10 @@ generic_hygrostat:
     away_humidity: 35
     away_fixed: True
     sensor_stale_duration: 00:15:00
-#binary_sensor:
-#  - platform: ping
-#    host: 192.168.1.34
-#    name: next-fx
-#    scan_interval: 30
 
-
-  
+binary_sensor:
+  - platform: ping
+    host: 192.168.1.1
+    name: wa850re
+    scan_interval: 30
+    
