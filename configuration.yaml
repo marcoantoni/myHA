@@ -1,0 +1,224 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+  
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+switch: !include switch.yaml
+
+google_assistant:
+  project_id: !secret google_project
+  service_account: !include google_service_account.json
+  report_state: true
+  exposed_domains:
+    - switch
+    - light
+    - script
+  entity_config:
+    script.1663020604184:
+      expose: true
+      name: Boa noite
+    switch.mikrotik_ether1_port:
+      expose: false
+    switch.mikrotik_ether2_port:
+      expose: false
+    switch.mikrotik_ether3_port:
+      expose: false
+    switch.mikrotik_ether4_port:
+      expose: false
+    switch.mikrotik_ether5_port:
+      expose: false
+    switch.mikrotik_wlan1_port:
+      expose: false
+    switch.mikrotik_wlan2_port:
+      expose: false
+############################################
+### CONFIGURAÇÃO HTTPS
+############################################
+http:
+    base_url: antoniha.duckdns.org
+    server_port: 8123
+    ssl_certificate: /ssl/fullchain.pem
+    ssl_key: /ssl/privkey.pem
+    
+############################################
+### INTEGRAÇÃO SONOFF
+############################################
+sonoff:
+    username: marco.antoni910@gmail.com
+    password: !secret ewelinkapp
+    force_update: [temperature]
+    scan_interval: '00:00:01'  # (optional) default 5 minutes
+    sensors: [temperature, humidity]
+    mode: cloud
+    reload: always  # update device list every time HA starts
+############################################
+### SENSORES
+############################################
+sensor:
+  # temperatura externa
+  - platform: template
+    sensors:
+        temperatura:
+            friendly_name: "Temperatura"
+            unit_of_measurement: '°C'
+            value_template: "{{ state_attr('weather.home', 'temperature') }}"
+        umidade:
+            friendly_name: "Umidade"
+            unit_of_measurement: '%'
+            value_template: "{{ state_attr('weather.home', 'humidity') }}"
+     
+
+        status_marco:
+            friendly_name: "Localização Marco"
+            value_template: >-
+                {% if is_state('device_tracker.celular_marco', 'driving') %}
+                    Dirigindo
+                {% elif is_state('device_tracker.celular_marco', 'moving') %}
+                    Caminhando
+                {% elif states.device_tracker.celular_marco.attributes.place == home %}
+                    Em casa
+                {% else %}
+                    Ausente
+                {% endif %}
+            entity_id: device_tracker.celular_marco
+        status_lucimara:
+            friendly_name: "Localização Lucimara"
+            value_template: >-
+                {% if is_state('device_tracker.lucimara', 'driving') %}
+                    Dirigindo
+                {% elif is_state('device_tracker.lucimara', 'moving') %}
+                    Caminhando
+                {% elif states.device_tracker.lucimara.attributes.place == home %}
+                    Em casa
+                {% else %}
+                    Ausente
+                {% endif %}
+            entity_id: device_tracker.lucimara
+    
+# monitoramento SNMP roteador
+# https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92
+  - platform: snmp
+    name: 'ether1_wan_in'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.2.1.31.1.1.1.6.1
+    community: 'public'
+    version: '2c'
+  - platform: snmp
+    name: 'ether1_wan_out'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.2.1.31.1.1.1.10.1
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_2g'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_5g'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.7
+    community: 'public'
+    version: '2c'
+
+  - platform: template
+    sensors:
+        internet_speed_in:
+            friendly_name: 'Download'
+            value_template: '{{ ((states.input_number.internet_delta_in.state | float ) / 1000000 ) | round(2) }}'
+            unit_of_measurement: 'Mbps'
+            icon_template: 'mdi:download-network'
+        internet_speed_out:
+            friendly_name: 'Upload'
+            value_template: '{{ ((states.input_number.internet_delta_out.state | float ) / 1000000 ) | round(2) }}'
+            unit_of_measurement: 'Mbps'
+            icon_template: 'mdi:upload-network'
+
+  - platform: statistics
+    name: 'WAN In'
+    entity_id: sensor.internet_speed_in
+    max_age:
+        hours: 12
+  - platform: statistics
+    name: 'WAN Out'
+    entity_id: sensor.internet_speed_out
+    max_age:
+        hours: 12
+
+input_number:
+    internet_delta_in:
+        initial: 0
+        min: 0
+        max: 1000000000000
+        mode: slider
+    internet_delta_out:
+        initial: 0
+        min: 0
+        max: 1000000000000
+        mode: slider
+    num_clients_wifi:
+        initial: 0
+        min: 0
+        max: 100
+        mode: slider
+#  fim monitoramento SNMP roteador
+
+light:
+  - platform: group
+    name: Todas as luzes
+    entities:
+      - light.sonoff_10012bf028
+      - light.sonoff_10012ba9da
+      - light.sonoff_10012be809
+      - light.suite
+      - light.sonoff_10010acddd
+      
+climate:
+  - platform: generic_thermostat
+    unique_id: termonstato_aquario
+    name: termonstato_aquario
+    heater: switch.sonoff_1000af0421
+    target_sensor: sensor.sonoff_1000af0421_temperature
+    min_temp: 27
+    max_temp: 31
+    precision: 0.1
+    cold_tolerance: 0.1 
+    hot_tolerance: 0
+    target_temp: 28.5
+    min_cycle_duration:
+      seconds: 30
+    
+   
+generic_hygrostat:
+  - name: Umidificador
+    humidifier: switch.sonoff_10005f57ee
+    target_sensor: sensor.rm4_pro_humidity
+    min_humidity: 30
+    max_humidity: 70
+    target_humidity: 50
+    dry_tolerance: 3
+    wet_tolerance: 0
+    device_class: "humidifier"
+    min_cycle_duration:
+      seconds: 30
+    keep_alive:
+      minutes: 3
+    initial_state: true
+    away_humidity: 35
+    away_fixed: True
+    sensor_stale_duration: 00:15:00
+
+binary_sensor:
+  - platform: ping
+    host: 192.168.1.1
+    name: wa850re
+    scan_interval: 30

@@ -65,6 +65,39 @@ views:
                       left: 78%
                       top: 90%
                     type: state-label
+          - type: horizontal-stack
+            cards:
+              - show_name: true
+                show_icon: true
+                show_state: false
+                type: button
+                tap_action:
+                  action: toggle
+                entity: script.1663020604184
+                name: Boa noite
+                icon_height: 30px
+                icon: mdi:sleep
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: switch.mikrotik_visitante_port
+                icon: mdi:wifi-arrow-left-right
+                show_state: true
+                name: Visitante
+                icon_height: 30px
+              - name: Garagem
+                show_name: true
+                show_icon: true
+                icon: mdi:garage-open-variant
+                type: button
+                tap_action:
+                  action: toggle
+                entity: switch.portao
+                show_state: false
+                state_color: false
+                icon_height: 30px
           - type: custom:button-card
             color: var(--card-background-color)
             color_type: label-card
@@ -116,7 +149,7 @@ views:
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.aquario
+                entity: light.escritorio_lucimara
                 show_state: true
                 icon_height: 30px
                 name: Esc. Lucimara
@@ -217,25 +250,43 @@ views:
               - entity: switch.subwoofer_ligar
                 icon: mdi:power
                 name: ' '
+                tap_action:
+                  action: toggle
               - entity: switch.subwoofer_bluetooth
                 icon: mdi:bluetooth
                 name: ' '
+                tap_action:
+                  action: toggle
               - entity: switch.subwoofer_volume_mais
                 icon: mdi:volume-plus
                 name: ' '
+                tap_action:
+                  action: toggle
               - entity: switch.subwoofer_fm
                 icon: mdi:radio-fm
                 name: ' '
+                tap_action:
+                  action: toggle
               - entity: switch.subwoofer_av
                 icon: mdi:audio-input-rca
                 name: ' '
+                tap_action:
+                  action: toggle
               - entity: switch.subwoofer_volume_menos
                 icon: mdi:volume-minus
                 name: ' '
+                tap_action:
+                  action: toggle
             title: Subwoofer
             type: glance
             state_color: false
             columns: 3
+          - type: custom:mini-media-player
+            entity: media_player.googlehome3204
+            group: true
+            volume_stateless: true
+            artwork: material
+            sound_mode: icon
       - type: vertical-stack
         cards:
           - type: custom:button-card

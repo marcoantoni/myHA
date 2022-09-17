@@ -1,0 +1,18 @@
+'1663020604184':
+  alias: Boa noite
+  sequence:
+  - service: light.turn_off
+    data:
+      transition: 90
+    target:
+      entity_id:
+      - light.todas_as_luzes
+      - light.yeelight_color_0x7d44584
+      - light.aquario
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.sonoff_1000755706
+      - switch.sonoff_1000913b99
+      - switch.sonoff_100049e5fc

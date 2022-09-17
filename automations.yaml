@@ -82,16 +82,6 @@
     data:
       message: Crocodillo tá chegando em casa
   mode: single
-- id: '1631732097046'
-  alias: Desligar luzes externas
-  description: ''
-  trigger:
-  - platform: time
-    at: '23:30'
-  condition: []
-  action:
-  - service: script.desligar_luzes_de_fora
-  mode: single
 - id: '1639684900205'
   alias: Monitor WAN in
   description: ''
@@ -152,16 +142,6 @@
       title: Atenção
       message: A temperatura do aquário está acima de 29,5º
   mode: single
-- id: '1656175213503'
-  alias: update temperature
-  description: ''
-  trigger:
-  - platform: time_pattern
-    minutes: '2'
-  action:
-  - service: homeassistant.update_entity
-    target:
-      entity_id: sensor.sonoff_1000af0421_temperature
 - id: '1657543576488'
   alias: Ligar luz do aquário
   description: ''
