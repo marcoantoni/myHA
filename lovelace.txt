@@ -6,9 +6,6 @@ views:
           - type: custom:simple-weather-card
             entity: weather.openweathermap
             name: em casa
-            backdrop:
-              day: var(--primary-color)
-              night: '#40445a'
             primary_info:
               - wind_bearing
               - humidity
@@ -20,14 +17,14 @@ views:
               - type: picture-elements
                 image: /local/marco.jpg
                 elements:
-                  - entity: sensor.celular_marco_battery_level
+                  - entity: sensor.celular_marco_battery_level_2
                     style:
                       color: white
                       font-size: 1.4em
                       left: 10%
                       top: 89%
                     type: state-icon
-                  - entity: sensor.celular_marco_battery_level
+                  - entity: sensor.celular_marco_battery_level_2
                     style:
                       color: white
                       font-size: 1.2em
@@ -102,9 +99,10 @@ views:
             color: var(--card-background-color)
             color_type: label-card
             name: Iluminação
+            entity: light.all_lights
             styles:
               card:
-                - height: 48px
+                - height: 40px
                 - font-size: 18px
           - type: horizontal-stack
             cards:
@@ -113,15 +111,17 @@ views:
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.sonoff_10012bf028
-                show_state: true
+                entity: light.sala
+                name: Sala
                 icon_height: 30px
+                show_state: true
               - show_name: true
                 show_icon: true
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.sonoff_10012be809
+                entity: light.escritorio
+                name: Escritório
                 icon_height: 30px
                 show_state: true
               - show_name: true
@@ -130,9 +130,10 @@ views:
                 tap_action:
                   action: toggle
                 entity: switch.sonoff_1000913b99
-                icon: mdi:lightbulb
-                show_state: true
+                name: Sacada
                 icon_height: 30px
+                show_state: true
+                icon: mdi:lightbulb
           - type: horizontal-stack
             cards:
               - show_name: true
@@ -140,37 +141,76 @@ views:
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.sonoff_10010acddd
+                entity: light.sala_de_tv
                 show_state: true
                 icon_height: 30px
-                name: Esc. Marco
               - show_name: true
                 show_icon: true
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.escritorio_lucimara
-                show_state: true
+                entity: light.sala_de_jantar
                 icon_height: 30px
-                name: Esc. Lucimara
+                show_state: true
               - show_name: true
                 show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10010acddd
+                icon: mdi:lightbulb
+                show_state: true
+                icon_height: 30px
+              - show_name: true
+                show_icon: true
+                show_state: true
                 type: button
                 tap_action:
                   action: toggle
                 entity: light.sonoff_10012ba9da
+                name: Escritório²
                 icon_height: 30px
-                show_state: true
-                name: Visitas
+                icon: ''
+          - type: horizontal-stack
+            cards:
               - show_name: true
                 show_icon: true
                 type: button
                 tap_action:
                   action: toggle
-                entity: light.yeelight_color_0x7d44584
+                entity: light.suite
                 name: Suíte
                 show_state: true
                 icon_height: 30px
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.controller_rgb_fd4174
+                name: Led TV
+                icon: mdi:led-strip
+                icon_height: 30px
+                show_state: true
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10012bf028
+                name: Entrada
+                icon_height: 30px
+                show_state: true
+              - show_name: true
+                show_icon: true
+                type: button
+                tap_action:
+                  action: toggle
+                entity: light.sonoff_10012be809
+                name: Corredor
+                icon_height: 30px
+                show_state: true
+                icon: mdi:lightbulb
       - type: vertical-stack
         cards:
           - type: custom:button-card
@@ -179,7 +219,7 @@ views:
             name: Sala
             styles:
               card:
-                - height: 48px
+                - height: 40px
                 - font-size: 18px
           - type: horizontal-stack
             cards:
@@ -201,119 +241,232 @@ views:
                 name: Umidade
                 show:
                   labels: false
-          - type: custom:button-card
-            entity: switch.sonoff_100049e5fc
-            name: Multimídia
-            show_label: true
-            state:
-              - color: green
-                icon: mdi:lightning-bolt
-                label: Ligado
-                operator: template
-                styles:
-                  label:
-                    - color: green
-                    - font-size: 14px
-                value: >
-                  [[[ return states['switch.sonoff_100049e5fc'].state === 'on'
-                  ]]]
-              - color: red
-                label: Desligado
-                operator: default
-                styles:
-                  label:
-                    - color: red
-                    - font-size: 14px
-            styles:
-              card:
-                - height: 65px
-                - filter: opacity(85%)
-              label:
-                - font-size: 18px
-              name:
-                - font-weight: 500
-                - font-size: 16px
           - type: custom:mini-media-player
-            entity: media_player.chromecast6337
+            entity: media_player.tv_da_sala
             group: false
-            volume_stateless: true
+            volume_stateless: false
             toggle_power: true
-            artwork: material
+            artwork: none
             source: full
             sound_mode: full
             info: scroll
             replace_mute: play_stop
+            icon: mdi:television-box
+            name: Televisão
+          - type: custom:mini-media-player
+            entity: media_player.lg_soundbar_b6c41d90_1dd1_469d_b286_cbb1cf8372f6
+            group: false
+            artwork: none
+            sound_mode: icon
+            name: Soundbar
+            icon: mdi:cast-audio
+            volume_step: '4'
+            power_state: true
+            hide:
+              power: true
+              volume: false
+              play_pause: true
+              play_stop: true
+              controls: false
+            shortcuts:
+              columns: 3
+              buttons:
+                - name: ''
+                  icon: mdi:power
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_ligar
+                - name: Efeito
+                  icon: mdi:music-box-multiple-outline
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_efeito_sonoro
+                - name: null
+                  icon: mdi:volume-mute
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_mute
+            info: short
+            volume_stateless: false
+            replace_mute: play_pause
+            source: full
           - show_name: false
             show_icon: true
             show_state: false
+            title: Receptor
+            type: glance
+            columns: 5
+            state_color: false
             entities:
-              - entity: switch.subwoofer_ligar
+              - entity: switch.nextfx_ligar
                 icon: mdi:power
                 name: ' '
                 tap_action:
                   action: toggle
-              - entity: switch.subwoofer_bluetooth
-                icon: mdi:bluetooth
+              - entity: switch.nextfx_epg
+                icon: mdi:format-list-bulleted
                 name: ' '
                 tap_action:
                   action: toggle
-              - entity: switch.subwoofer_volume_mais
-                icon: mdi:volume-plus
+              - entity: switch.nextfx_canal_mais
+                icon: mdi:chevron-up-box-outline
                 name: ' '
                 tap_action:
                   action: toggle
-              - entity: switch.subwoofer_fm
-                icon: mdi:radio-fm
+              - entity: switch.nextfx_info
+                icon: mdi:information
                 name: ' '
                 tap_action:
                   action: toggle
-              - entity: switch.subwoofer_av
-                icon: mdi:audio-input-rca
+              - entity: switch.nextfx_mute
+                icon: mdi:volume-off
                 name: ' '
+                state_color: true
                 tap_action:
                   action: toggle
-              - entity: switch.subwoofer_volume_menos
+              - entity: switch.nextfx_volume_menos
                 icon: mdi:volume-minus
                 name: ' '
                 tap_action:
                   action: toggle
-            title: Subwoofer
-            type: glance
-            state_color: false
-            columns: 3
-          - type: custom:mini-media-player
-            entity: media_player.googlehome3204
-            group: true
-            volume_stateless: true
-            artwork: material
-            sound_mode: icon
+              - entity: switch.nextfx_volume_mais
+                icon: mdi:volume-plus
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_canal_menos
+                icon: mdi:chevron-down-box-outline
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_play_pause
+                icon: mdi:play-pause
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_stop
+                icon: mdi:stop-circle-outline
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_retroceder
+                icon: mdi:rewind
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_avancar
+                icon: mdi:fast-forward
+                name: ' '
+                tap_action:
+                  action: toggle
       - type: vertical-stack
         cards:
           - type: custom:button-card
             color: var(--card-background-color)
             color_type: label-card
-            name: Aquário
+            name: Quarto
             styles:
               card:
-                - height: 48px
+                - height: 40px
                 - font-size: 18px
-          - show_name: true
-            type: custom:slider-button-card
-            entity: switch.sonoff_1000755706
-            show_state: true
-            name: Iluminação
-            background: gradient
-            slider:
-              direction: left-right
-              background: gradient
-              use_state_color: true
-            action_button:
-              mode: toggle
-            compact: true
-            icon:
-              use_state_color: true
-              show: true
-              icon: mdi:ceiling-light
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.sensor_t_h_temperature
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.sensor_t_h_humidity
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+          - type: conditional
+            conditions:
+              - entity: switch.wifi_plug_2usb_socket_1
+                state: 'off'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.chromecast6337
+              group: false
+              volume_stateless: true
+              toggle_power: false
+              artwork: none
+              sound_mode: icon
+              info: scroll
+              replace_mute: play_stop
+              icon: mdi:television-box
+              name: Televisão
+              hide:
+                power: true
+              shortcuts:
+                columns: 1
+                buttons:
+                  - name: Ligar
+                    icon: mdi:power
+                    type: service
+                    id: switch.turn_on
+                    data:
+                      entity_id: switch.wifi_plug_2usb_socket_1
+          - type: conditional
+            conditions:
+              - entity: switch.wifi_plug_2usb_socket_1
+                state: 'on'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.chromecast6337
+              group: false
+              volume_stateless: true
+              toggle_power: false
+              artwork: none
+              sound_mode: icon
+              info: scroll
+              replace_mute: play_stop
+              icon: mdi:television-box
+              name: Televisão
+              hide:
+                power: true
+                power_state: true
+              shortcuts:
+                columns: 1
+                buttons:
+                  - name: Desligar
+                    icon: mdi:power
+                    type: service
+                    id: switch.turn_off
+                    data:
+                      entity_id: switch.wifi_plug_2usb_socket_1
+          - type: custom:mini-media-player
+            entity: media_player.nestmini1158
+            group: false
+            volume_stateless: true
+            artwork: none
+            sound_mode: icon
+            name: Google Nest
+            toggle_power: true
+            source: icon
+            hide:
+              power: false
+          - type: entities
+            entities:
+              - entity: switch.sonoff_1000755706
+                name: Iluminação
+                secondary_info: last-changed
+                icon: mdi:ceiling-light
+            title: Aquário
+            state_color: true
+            show_header_toggle: false
           - type: horizontal-stack
             cards:
               - type: thermostat
@@ -339,11 +492,42 @@ views:
                   - color: '#f3b712'
                   - value: 30
                     color: '#ff0000'
-          - type: humidifier
-            entity: humidifier.umidificador
-            name: Umidificador
       - type: vertical-stack
         cards:
+          - type: entities
+            entities:
+              - entity: switch.sala_display_light
+                name: Led ar condicionado (sala)
+                secondary_info: none
+                icon: ''
+              - entity: switch.quarto_display_light
+                secondary_info: none
+                name: Led ar condicionado (quarto)
+              - entity: switch.sala_jet_mode
+                secondary_info: none
+                name: Turbo ar condicionado (sala)
+                icon: mdi:sun-snowflake
+              - entity: switch.quarto_jet_mode
+                name: Turbo ar condicionado (quarto)
+                icon: mdi:sun-snowflake
+              - entity: switch.socket_2
+                name: Soundbar
+                icon: mdi:lightning-bolt
+              - entity: switch.socket_4
+                name: Receptor e TV (sala)
+                icon: mdi:lightning-bolt
+            title: Outros controles
+            state_color: true
+          - type: entities
+            entities:
+              - entity: sensor.kwh_gasto_mes_ac_sala
+                secondary_info: last-updated
+                name: Sala
+              - entity: sensor.kwh_gasto_mes_ac_quarto
+                secondary_info: last-changed
+                name: Quarto
+            title: Consumo energético - A.C
+            state_color: false
           - entities:
               - color: '#00B0FF'
                 entity: sensor.internet_speed_in
@@ -357,11 +541,152 @@ views:
               extrema: true
               fill: false
             type: custom:mini-graph-card
+  - theme: Backend-selected
+    title: Climatização
+    path: a
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Sala
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_temperature
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_humidity
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+          - type: thermostat
+            entity: climate.sala
+            name: Ar condicionado
           - type: entities
             entities:
-              - entity: binary_sensor.wa850re
-                name: Repetidor de internet
-              - entity: binary_sensor.rpi_power_status
+              - entity: switch.sala_display_light
+                secondary_info: none
+                name: Led
+              - entity: switch.sala_jet_mode
+                secondary_info: none
+                name: Turbo
+              - entity: sensor.sala_filter_remaining_life
+                name: Vida útil do filtro
+            state_color: true
+          - type: humidifier
+            entity: humidifier.umidificador_sala
+            name: Umidificador
+          - type: thermostat
+            entity: climate.aquecedor_sala
+            name: Aquecedor
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Quarto
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.sensor_t_h_temperature
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.sensor_t_h_humidity
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+          - type: thermostat
+            entity: climate.quarto
+            name: Ar condicionado
+          - type: entities
+            entities:
+              - entity: switch.quarto_display_light
+                secondary_info: none
+                name: Led
+              - entity: switch.quarto_jet_mode
+                secondary_info: none
+                name: Turbo
+              - entity: sensor.quarto_filter_remaining_life
+                name: Vida útil do filtro
+            state_color: true
+          - type: humidifier
+            entity: humidifier.umidificador_quarto
+            name: Umidificador
+          - type: thermostat
+            entity: climate.aquecedor_quarto
+            name: Aquecedor
+  - theme: Backend-selected
+    title: Dispositivos
+    path: disposito
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Router Mikrotik
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                entity: sensor.mikrotik_hap_ac_lite_cpu_load
+                name: CPU
+                needle: false
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.mikrotik_hap_ac_lite_memory_usage
+                name: RAM
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.mikrotik_hap_ac_lite_hdd_usage
+                name: Armazenamento
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+          - type: entities
+            entities:
               - entity: sensor.wireless_connected_clients_2g
                 name: Dispositivos conectados em 2.4Ghz
                 icon: mdi:numeric
@@ -370,3 +695,103 @@ views:
                 secondary_info: last-changed
                 name: Dispositivos conectados em 5.8Ghz
                 icon: mdi:numeric
+              - entity: sensor.mikrotik_hap_ac_lite_uptime
+                secondary_info: none
+                name: Uptime
+            state_color: false
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Repetidor Mikrotik
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                entity: sensor.repetidor_rb951ui_2hnd_cpu_load
+                name: CPU
+                needle: false
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.repetidor_rb951ui_2hnd_memory_usage
+                name: RAM
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.repetidor_rb951ui_2hnd_hdd_usage
+                name: Armazenamento
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+          - type: entities
+            entities:
+              - entity: binary_sensor.mikrotik_rb951ui
+                name: Status da conexão
+                secondary_info: last-updated
+              - entity: sensor.repetidor_rb951ui_2hnd_wireless_clients
+                name: Dispositivos conectados em 2.4Ghz
+                icon: mdi:numeric
+                secondary_info: last-changed
+              - entity: sensor.repetidor_rb951ui_2hnd_uptime
+                secondary_info: none
+                name: Uptime
+            state_color: false
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Raspberry PI
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                entity: sensor.processor_use
+                name: CPU
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.memory_use_percent
+                name: RAM
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.disk_use_percent
+                name: Armazenamento
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+          - type: entities
+            entities:
+              - entity: binary_sensor.rpi_power_status
+                name: Power status
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Outros
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: entities
+            entities:
+              - entity: sensor.sensor_t_h_battery_state
+                name: Relógio quarto

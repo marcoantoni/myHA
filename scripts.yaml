@@ -1,18 +1,59 @@
 '1663020604184':
   alias: Boa noite
   sequence:
+  - service: script.desligar_multimidia
+    data: {}
   - service: light.turn_off
     data:
-      transition: 90
+      transition: 120
     target:
       entity_id:
-      - light.todas_as_luzes
-      - light.yeelight_color_0x7d44584
-      - light.aquario
+      - light.sala_de_jantar
+      - light.sala_de_tv
+      - light.suite
+      - light.entrada
+      - light.sonoff_10010acddd
+      - light.sonoff_10012ba9da
+      - light.controller_rgb_fd4174
   - service: switch.turn_off
     data: {}
     target:
       entity_id:
       - switch.sonoff_1000755706
       - switch.sonoff_1000913b99
-      - switch.sonoff_100049e5fc
+      - switch.socket_2
+      - switch.socket_4
+  mode: single
+desligar_multimidia:
+  alias: desligar_multimidia
+  sequence:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id:
+      - switch.nextfx_ligar
+      - switch.lgsp8a_ligar
+      - switch.tvlg_power
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.tomada_comoda
+  mode: single
+hdmi_select:
+  alias: hdmi_select
+  sequence:
+  - service: media_player.select_source
+    data:
+      source: HDMI
+    target:
+      entity_id: media_player.lg_soundbar_25f89621_9da8_4a81_90b9_b04dea5f071b
+  mode: single
+bluetooth_select:
+  alias: bluetooth_select
+  sequence:
+  - service: media_player.select_source
+    data:
+      source: Bluetooth
+    target:
+      entity_id: media_player.lg_soundbar_b6c41d90_1dd1_469d_b286_cbb1cf8372f6
+  mode: single

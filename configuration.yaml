@@ -11,32 +11,6 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 switch: !include switch.yaml
 
-google_assistant:
-  project_id: !secret google_project
-  service_account: !include google_service_account.json
-  report_state: true
-  exposed_domains:
-    - switch
-    - light
-    - script
-  entity_config:
-    script.1663020604184:
-      expose: true
-      name: Boa noite
-    switch.mikrotik_ether1_port:
-      expose: false
-    switch.mikrotik_ether2_port:
-      expose: false
-    switch.mikrotik_ether3_port:
-      expose: false
-    switch.mikrotik_ether4_port:
-      expose: false
-    switch.mikrotik_ether5_port:
-      expose: false
-    switch.mikrotik_wlan1_port:
-      expose: false
-    switch.mikrotik_wlan2_port:
-      expose: false
 ############################################
 ### CONFIGURAÇÃO HTTPS
 ############################################
@@ -57,6 +31,41 @@ sonoff:
     sensors: [temperature, humidity]
     mode: cloud
     reload: always  # update device list every time HA starts
+
+############################################
+### CONFIGURAÇÃO GOOGLE ASSISTANT
+############################################
+google_assistant:
+  project_id: !secret google_project
+  service_account: !include google_service_account.json
+  report_state: true
+  exposed_domains:
+    - switch
+    - light
+    - script
+    - sensor 
+    - climate
+  entity_config:
+    script.1663020604184:
+      expose: true
+      name: Boa noite
+    switch.mikrotik_ether1_port:
+      expose: false
+    switch.mikrotik_ether2_port:
+      expose: false
+    switch.mikrotik_ether3_port:
+      expose: false
+    switch.mikrotik_ether4_port:
+      expose: false
+    switch.mikrotik_ether5_port:
+      expose: false
+    switch.mikrotik_wlan1_port:
+      expose: false
+    switch.mikrotik_wlan2_port:
+      expose: false
+    switch.mikrotik_internet_port:
+      expose: false
+      
 ############################################
 ### SENSORES
 ############################################
@@ -72,34 +81,20 @@ sensor:
             friendly_name: "Umidade"
             unit_of_measurement: '%'
             value_template: "{{ state_attr('weather.home', 'humidity') }}"
-     
-
-        status_marco:
-            friendly_name: "Localização Marco"
-            value_template: >-
-                {% if is_state('device_tracker.celular_marco', 'driving') %}
-                    Dirigindo
-                {% elif is_state('device_tracker.celular_marco', 'moving') %}
-                    Caminhando
-                {% elif states.device_tracker.celular_marco.attributes.place == home %}
-                    Em casa
-                {% else %}
-                    Ausente
-                {% endif %}
-            entity_id: device_tracker.celular_marco
-        status_lucimara:
-            friendly_name: "Localização Lucimara"
-            value_template: >-
-                {% if is_state('device_tracker.lucimara', 'driving') %}
-                    Dirigindo
-                {% elif is_state('device_tracker.lucimara', 'moving') %}
-                    Caminhando
-                {% elif states.device_tracker.lucimara.attributes.place == home %}
-                    Em casa
-                {% else %}
-                    Ausente
-                {% endif %}
-            entity_id: device_tracker.lucimara
+  - platform: systemmonitor
+    resources:
+      - type: disk_free
+        arg: /
+      - type: disk_use
+        arg: /
+      - type: disk_use_percent
+        arg: /
+      - type: memory_free
+      - type: memory_use
+      - type: memory_use_percent
+      - type: processor_use
+      - type: last_boot
+  
     
 # monitoramento SNMP roteador
 # https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92
@@ -119,14 +114,14 @@ sensor:
   - platform: snmp
     name: 'wireless_connected_clients_2g'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.1
     community: 'public'
     version: '2c'
     
   - platform: snmp
     name: 'wireless_connected_clients_5g'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.7
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.2
     community: 'public'
     version: '2c'
 
@@ -146,11 +141,13 @@ sensor:
   - platform: statistics
     name: 'WAN In'
     entity_id: sensor.internet_speed_in
+    state_characteristic: mean
     max_age:
         hours: 12
   - platform: statistics
     name: 'WAN Out'
     entity_id: sensor.internet_speed_out
+    state_characteristic: mean
     max_age:
         hours: 12
 
@@ -170,18 +167,44 @@ input_number:
         min: 0
         max: 100
         mode: slider
-#  fim monitoramento SNMP roteador
+    #  fim monitoramento SNMP roteador
+    tarifa_energia_consumida:
+        icon: mdi:currency-brl
+        name: Tarifa de Energia
+        initial: 0
+        min: 0
+        max: 100
+        step: 0.01
+        unit_of_measurement: 'R$/kWh'
+        mode: box
+
 
 light:
   - platform: group
-    name: Todas as luzes
+    name: all_lights
     entities:
       - light.sonoff_10012bf028
-      - light.sonoff_10012ba9da
       - light.sonoff_10012be809
-      - light.suite
+      - light.sonoff_10012ba9da
       - light.sonoff_10010acddd
+      - light.suite
+      - light.sala_de_jantar
+      - light.sala_de_tv
+      - light.controller_rgb_fd4174
       
+    
+  - platform: group
+    name: Sala
+    entities:
+      - light.sala_de_jantar
+      - light.sala_de_tv
+ 
+  - platform: group
+    name: Escritório
+    entities:
+      - light.sonoff_10010acddd
+      - light.sonoff_10012ba9da
+
 climate:
   - platform: generic_thermostat
     unique_id: termonstato_aquario
@@ -196,11 +219,37 @@ climate:
     target_temp: 28.5
     min_cycle_duration:
       seconds: 30
+  
+  - platform: generic_thermostat 
+    name: aquecedor_sala
+    heater: switch.sonoff_10005f57ee
+    target_sensor: sensor.rm4_pro_temperature
+    min_temp: 13
+    max_temp: 25
+    precision: 0.1
+    cold_tolerance: 0.1 
+    hot_tolerance: 0
+    target_temp: 16
+    min_cycle_duration:
+      seconds: 30
+      
+  - platform: generic_thermostat 
+    name: aquecedor_quarto
+    heater: switch.sonoff_10005f57ee
+    target_sensor: sensor.sensor_t_h_temperature
+    min_temp: 13
+    max_temp: 25
+    precision: 0.1
+    cold_tolerance: 0.1 
+    hot_tolerance: 0
+    target_temp: 16
+    min_cycle_duration:
+      seconds: 30
     
    
 generic_hygrostat:
-  - name: Umidificador
-    humidifier: switch.sonoff_10005f57ee
+  - name: umidificador_sala
+    humidifier: switch.sonoff_100049e5fc
     target_sensor: sensor.rm4_pro_humidity
     min_humidity: 30
     max_humidity: 70
@@ -217,8 +266,34 @@ generic_hygrostat:
     away_fixed: True
     sensor_stale_duration: 00:15:00
 
+  - name: umidificador_quarto
+    humidifier: switch.tomada_comoda_socket_1
+    target_sensor: sensor.sensor_t_h_temperature
+    min_humidity: 30
+    max_humidity: 70
+    target_humidity: 50
+    dry_tolerance: 3
+    wet_tolerance: 0
+    device_class: "humidifier"
+    min_cycle_duration:
+      seconds: 30
+    keep_alive:
+      minutes: 3
+    initial_state: true
+    away_humidity: 35
+    away_fixed: True
+    sensor_stale_duration: 00:15:00
+
+utility_meter:
+  kwh_gasto_mes_ac_sala:
+    source: sensor.sala_energy_current
+    cycle: monthly
+  kwh_gasto_mes_ac_quarto:
+    source: sensor.quarto_energy_current
+    cycle: monthly
+    
 binary_sensor:
   - platform: ping
-    host: 192.168.1.1
-    name: wa850re
+    host: 192.168.1.253
+    name: mikrotik_RB951Ui
     scan_interval: 30
