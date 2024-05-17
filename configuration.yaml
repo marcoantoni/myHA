@@ -1,4 +1,3 @@
-
 # Loads default set of integrations. Do not remove.
 default_config:
 
@@ -35,36 +34,14 @@ sonoff:
 ############################################
 ### CONFIGURAÇÃO GOOGLE ASSISTANT
 ############################################
+# Example configuration.yaml entry
 google_assistant:
-  project_id: !secret google_project
-  service_account: !include google_service_account.json
+  project_id: home-assistant-362622
+  service_account: !include SERVICE_ACCOUNT.JSON
   report_state: true
   exposed_domains:
     - switch
     - light
-    - script
-    - sensor 
-    - climate
-  entity_config:
-    script.1663020604184:
-      expose: true
-      name: Boa noite
-    switch.mikrotik_ether1_port:
-      expose: false
-    switch.mikrotik_ether2_port:
-      expose: false
-    switch.mikrotik_ether3_port:
-      expose: false
-    switch.mikrotik_ether4_port:
-      expose: false
-    switch.mikrotik_ether5_port:
-      expose: false
-    switch.mikrotik_wlan1_port:
-      expose: false
-    switch.mikrotik_wlan2_port:
-      expose: false
-    switch.mikrotik_internet_port:
-      expose: false
       
 ############################################
 ### SENSORES
@@ -81,47 +58,62 @@ sensor:
             friendly_name: "Umidade"
             unit_of_measurement: '%'
             value_template: "{{ state_attr('weather.home', 'humidity') }}"
-  - platform: systemmonitor
-    resources:
-      - type: disk_free
-        arg: /
-      - type: disk_use
-        arg: /
-      - type: disk_use_percent
-        arg: /
-      - type: memory_free
-      - type: memory_use
-      - type: memory_use_percent
-      - type: processor_use
-      - type: last_boot
-  
+
+  - platform: template
+    sensors:
+      washer_cycle_state:
+        value_template: '{{state_attr(''sensor.lavadora_com_abertura_frontal'', ''remain_time'')}}'
+        friendly_name: Máquina de lavar
+        icon_template: 'mdi:washing-machine'
+
     
 # monitoramento SNMP roteador
 # https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92
   - platform: snmp
     name: 'ether1_wan_in'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.2.1.31.1.1.1.6.1
+    baseoid: .1.3.6.1.2.1.31.1.1.1.6.3
     community: 'public'
     version: '2c'
   - platform: snmp
     name: 'ether1_wan_out'
     host: 192.168.1.254
-    baseoid: 1.3.6.1.2.1.31.1.1.1.10.1
+    baseoid: .1.3.6.1.2.1.31.1.1.1.10.3
     community: 'public'
     version: '2c'
     
   - platform: snmp
-    name: 'wireless_connected_clients_2g'
+    name: 'wireless_connected_clients_rb952_2g_antoni'
     host: 192.168.1.254
     baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.1
     community: 'public'
     version: '2c'
     
   - platform: snmp
-    name: 'wireless_connected_clients_5g'
+    name: 'wireless_connected_clients_rb952_2g_iot'
+    host: 192.168.1.254
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.18
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_rb952_5g'
     host: 192.168.1.254
     baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.2
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_rb951_2g_antoni'
+    host: 192.168.1.253
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
+    community: 'public'
+    version: '2c'
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_rb951_2g_iot'
+    host: 192.168.1.253
+    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.17
     community: 'public'
     version: '2c'
 
@@ -181,76 +173,80 @@ input_number:
 
 light:
   - platform: group
-    name: all_lights
+    name: luzes_internas
     entities:
-      - light.sonoff_10012bf028
-      - light.sonoff_10012be809
-      - light.sonoff_10012ba9da
-      - light.sonoff_10010acddd
+      - light.cozinha
+      - light.sala
+      - light.escada
+      - light.corredor
       - light.suite
-      - light.sala_de_jantar
-      - light.sala_de_tv
+      - light.escritorio
       - light.controller_rgb_fd4174
       
-    
   - platform: group
-    name: Sala
+    name: luzes_externas
     entities:
-      - light.sala_de_jantar
-      - light.sala_de_tv
- 
+      - light.lateral
+      - light.garagem
+      - light.lavanderia
+      
   - platform: group
-    name: Escritório
+    name: Quarto de visitas
+    unique_id: quarto_de_visitas
     entities:
       - light.sonoff_10010acddd
       - light.sonoff_10012ba9da
 
-climate:
-  - platform: generic_thermostat
-    unique_id: termonstato_aquario
-    name: termonstato_aquario
-    heater: switch.sonoff_1000af0421
-    target_sensor: sensor.sonoff_1000af0421_temperature
-    min_temp: 27
-    max_temp: 31
-    precision: 0.1
-    cold_tolerance: 0.1 
-    hot_tolerance: 0
-    target_temp: 28.5
-    min_cycle_duration:
-      seconds: 30
+shopping_list:
+  mercado:
+  farmacia:
   
-  - platform: generic_thermostat 
-    name: aquecedor_sala
-    heater: switch.sonoff_10005f57ee
-    target_sensor: sensor.rm4_pro_temperature
-    min_temp: 13
-    max_temp: 25
-    precision: 0.1
-    cold_tolerance: 0.1 
-    hot_tolerance: 0
-    target_temp: 16
-    min_cycle_duration:
-      seconds: 30
-      
-  - platform: generic_thermostat 
-    name: aquecedor_quarto
-    heater: switch.sonoff_10005f57ee
-    target_sensor: sensor.sensor_t_h_temperature
-    min_temp: 13
-    max_temp: 25
-    precision: 0.1
-    cold_tolerance: 0.1 
-    hot_tolerance: 0
-    target_temp: 16
-    min_cycle_duration:
-      seconds: 30
+#climate:
+#  - platform: generic_thermostat
+#    unique_id: termonstato_aquario
+#    name: termonstato_aquario
+#    heater: switch.sonoff_1000af0421
+#    target_sensor: sensor.sonoff_1000af0421_temperature
+#    min_temp: 27
+#    max_temp: 31
+#    precision: 0.1
+#    cold_tolerance: 0.1 
+#    hot_tolerance: 0
+#    target_temp: 28.5
+#    min_cycle_duration:
+#      seconds: 30
+  
+#  - platform: generic_thermostat 
+#    name: aquecedor_sala
+#    heater: switch.sonoff_10005f57ee
+#    target_sensor: sensor.rm4_pro_temperature
+#    min_temp: 13
+#    max_temp: 25
+#    precision: 0.1
+#    cold_tolerance: 0.1 
+#    hot_tolerance: 0
+#    target_temp: 16
+#   min_cycle_duration:
+#      seconds: 30
+#      
+#  - platform: generic_thermostat 
+#    name: aquecedor_quarto
+#    heater: switch.sonoff_10005f57ee
+#    target_sensor: sensor.sensor_t_h_temperature
+#    min_temp: 13
+#    max_temp: 25
+#    precision: 0.1
+#    cold_tolerance: 0.1 
+#    hot_tolerance: 0
+#    target_temp: 16
+#    min_cycle_duration:
+#      seconds: 30
     
    
 generic_hygrostat:
-  - name: umidificador_sala
+  - name: umidificador_suite
     humidifier: switch.sonoff_100049e5fc
-    target_sensor: sensor.rm4_pro_humidity
+    target_sensor: sensor.th_suite_umidade
     min_humidity: 30
     max_humidity: 70
     target_humidity: 50
@@ -266,9 +262,9 @@ generic_hygrostat:
     away_fixed: True
     sensor_stale_duration: 00:15:00
 
-  - name: umidificador_quarto
-    humidifier: switch.tomada_comoda_socket_1
-    target_sensor: sensor.sensor_t_h_temperature
+  - name: umidificador_escritorio
+    humidifier: switch.sonoff_100049e5fc
+    target_sensor: sensor.sonoff_1000af0421_humidity
     min_humidity: 30
     max_humidity: 70
     target_humidity: 50
@@ -285,15 +281,14 @@ generic_hygrostat:
     sensor_stale_duration: 00:15:00
 
 utility_meter:
-  kwh_gasto_mes_ac_sala:
-    source: sensor.sala_energy_current
+  kwh_gasto_mes_ac_suite:
+    source: sensor.suite_energy_current
     cycle: monthly
-  kwh_gasto_mes_ac_quarto:
-    source: sensor.quarto_energy_current
+  kwh_gasto_mes_ac_escritorio:
+    source: sensor.escritorio_energy_current
     cycle: monthly
-    
-binary_sensor:
-  - platform: ping
-    host: 192.168.1.253
-    name: mikrotik_RB951Ui
-    scan_interval: 30
+  kwh_gasto_mes_casa:
+    unique_id: kwh_gasto_mes_casa
+    source: sensor.total_power
+    cycle: monthly
+        

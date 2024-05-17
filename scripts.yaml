@@ -1,43 +1,57 @@
 '1663020604184':
-  alias: Boa noite
+  alias: Hora de dormir
   sequence:
   - service: script.desligar_multimidia
     data: {}
   - service: light.turn_off
+    metadata: {}
     data:
       transition: 120
     target:
       entity_id:
-      - light.sala_de_jantar
-      - light.sala_de_tv
       - light.suite
-      - light.entrada
-      - light.sonoff_10010acddd
-      - light.sonoff_10012ba9da
-      - light.controller_rgb_fd4174
-  - service: switch.turn_off
+      - light.escritorio
+      - light.sala
+      - light.luzes_externas
+  - service: light.turn_off
+    metadata: {}
     data: {}
     target:
-      entity_id:
-      - switch.sonoff_1000755706
-      - switch.sonoff_1000913b99
-      - switch.socket_2
-      - switch.socket_4
+      entity_id: light.luzes_internas
   mode: single
 desligar_multimidia:
   alias: desligar_multimidia
   sequence:
-  - service: switch.turn_on
-    data: {}
+  - service: switch.turn_off
     target:
       entity_id:
       - switch.nextfx_ligar
-      - switch.lgsp8a_ligar
-      - switch.tvlg_power
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - service: switch.turn_off
+    target:
+      entity_id: switch.tv_sala_power
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
   - service: switch.turn_off
     data: {}
     target:
-      entity_id: switch.tomada_comoda
+      entity_id: switch.lgsp8a_ligar
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.tomada_comoda_socket1
+      - switch.regua_sala_socket1
+      - switch.regua_sala_socket3
   mode: single
 hdmi_select:
   alias: hdmi_select

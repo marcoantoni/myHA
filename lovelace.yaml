@@ -1,0 +1,1203 @@
+views:
+  - title: Home
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: picture-elements
+                image: /local/marco.jpg
+                elements:
+                  - entity: sensor.celular_marco_battery_level
+                    style:
+                      color: white
+                      font-size: 1.4em
+                      left: 10%
+                      top: 89%
+                    type: state-icon
+                  - entity: sensor.celular_marco_battery_level
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 28%
+                      top: 90%
+                    type: state-label
+                  - entity: person.marco_antoni
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 78%
+                      top: 90%
+                    type: state-label
+              - type: picture-elements
+                image: /local/lucimara.jpg
+                elements:
+                  - entity: sensor.celular_lucimara_battery_level
+                    style:
+                      color: white
+                      font-size: 1.4em
+                      left: 10%
+                      top: 89%
+                    type: state-icon
+                  - entity: sensor.celular_lucimara_battery_level
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 28%
+                      top: 90%
+                    type: state-label
+                  - entity: person.lucimara
+                    style:
+                      color: white
+                      font-size: 1.2em
+                      left: 78%
+                      top: 90%
+                    type: state-label
+          - show_name: true
+            show_icon: true
+            show_state: true
+            type: glance
+            columns: 3
+            state_color: true
+            entities:
+              - entity: binary_sensor.porta_cozinha_porta
+                name: Cozinha
+              - entity: binary_sensor.porta_da_frente_porta
+                name: Sala
+              - entity: cover.portao
+                name: Portão
+                tap_action:
+                  action: toggle
+            title: Portas
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-light-card
+                entity: light.cozinha
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: false
+                show_color_temp_control: false
+                collapsible_controls: true
+                show_color_control: false
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.sala
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: false
+                show_color_temp_control: false
+                collapsible_controls: true
+                show_color_control: false
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.suite
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: false
+                show_color_temp_control: false
+                collapsible_controls: false
+                show_color_control: false
+                fill_container: true
+              - type: custom:mushroom-entity-card
+                entity: script.1663020604184
+                tap_action:
+                  action: toggle
+                name: Boa noite
+                icon: mdi:sleep
+                layout: vertical
+                icon_color: disabled
+                primary_info: none
+                fill_container: true
+                secondary_info: name
+                icon_type: icon
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-entity-card
+                entity: switch.regua_sala_socket1
+                tap_action:
+                  action: toggle
+                name: TV
+                icon: mdi:power-plug-outline
+                layout: horizontal
+                icon_type: icon
+              - type: custom:mushroom-entity-card
+                entity: switch.regua_sala_socket3
+                tap_action:
+                  action: toggle
+                name: Soundbar
+                icon: mdi:power-plug-outline
+                layout: horizontal
+                icon_type: icon
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Sala
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: custom:mini-media-player
+            entity: media_player.tv_da_sala
+            group: false
+            artwork: none
+            sound_mode: icon
+            name: Televisão
+            icon: mdi:television-box
+            volume_step: '1'
+            power_state: true
+            info: short
+            volume_stateless: true
+            replace_mute: play_pause
+            source: full
+            show_name: false
+            show_icon: true
+            show_state: false
+            hide:
+              power: false
+              volume: false
+              play_pause: true
+              play_stop: true
+              controls: false
+              mute: false
+            shortcuts:
+              columns: 1
+              buttons:
+                - name: Modo Cinema
+                  icon: mdi:theater
+                  type: service
+                  id: script.turn_off
+                  data:
+                    entity_id: switch.tomada_comoda_socket1
+            toggle_power: true
+          - type: custom:mini-media-player
+            entity: media_player.sounbar
+            group: false
+            artwork: none
+            sound_mode: icon
+            name: Soundbar
+            icon: mdi:cast-audio
+            volume_step: '4'
+            power_state: true
+            info: short
+            volume_stateless: true
+            replace_mute: play_pause
+            source: full
+            show_name: false
+            show_icon: true
+            show_state: false
+            hide:
+              power: true
+              volume: false
+              play_pause: true
+              play_stop: true
+              controls: false
+            shortcuts:
+              columns: 3
+              buttons:
+                - name: ''
+                  icon: mdi:power
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_ligar
+                - name: ''
+                  icon: mdi:music-box-multiple-outline
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_efeito_sonoro
+                - name: null
+                  icon: mdi:volume-mute
+                  type: service
+                  id: switch.turn_on
+                  data:
+                    entity_id: switch.lgsp8a_mute
+          - show_name: false
+            show_icon: true
+            show_state: false
+            title: Receptor
+            type: glance
+            columns: 5
+            state_color: false
+            entities:
+              - entity: binary_sensor.next_fx
+                icon: mdi:power
+                state_color: true
+                name: ' '
+                tap_action:
+                  action: call-service
+                  service: switch.turn_off
+                  target:
+                    entity_id: switch.nextfx_ligar
+              - entity: switch.nextfx_epg
+                icon: mdi:format-list-bulleted
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_canal_mais
+                icon: mdi:chevron-up-box-outline
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_info
+                icon: mdi:information
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_mute
+                icon: mdi:volume-off
+                name: ' '
+                state_color: true
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_volume_menos
+                icon: mdi:volume-minus
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_volume_mais
+                icon: mdi:volume-plus
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_canal_menos
+                icon: mdi:chevron-down-box-outline
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_play_pause
+                icon: mdi:play-pause
+                name: ' '
+                tap_action:
+                  action: toggle
+              - entity: switch.nextfx_stop
+                icon: mdi:stop-circle-outline
+                name: ' '
+                tap_action:
+                  action: toggle
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Quarto
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: switch.tomada_comoda_socket1
+                state: 'off'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.tv_do_quarto
+              group: false
+              artwork: none
+              sound_mode: icon
+              name: Televisão
+              icon: mdi:television-box
+              volume_step: '1'
+              power_state: true
+              info: short
+              volume_stateless: true
+              replace_mute: play_pause
+              source: full
+              show_name: false
+              show_icon: true
+              show_state: false
+              toggle_power: true
+              hide:
+                power: true
+                volume: false
+                play_pause: true
+                play_stop: true
+                controls: false
+                source: true
+              shortcuts:
+                columns: 1
+                buttons:
+                  - name: Ligar
+                    icon: mdi:power-plug-outline
+                    type: service
+                    id: switch.turn_on
+                    data:
+                      entity_id: switch.tomada_comoda_socket1
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: switch.tomada_comoda_socket1
+                state: 'on'
+            card:
+              type: custom:mini-media-player
+              entity: media_player.tv_do_quarto
+              group: false
+              artwork: none
+              sound_mode: icon
+              name: Televisão
+              icon: mdi:television-box
+              volume_step: '1'
+              power_state: true
+              info: short
+              volume_stateless: true
+              replace_mute: play_pause
+              source: false
+              show_name: false
+              show_icon: true
+              show_state: false
+              toggle_power: true
+              hide:
+                power: true
+                volume: false
+                play_pause: true
+                play_stop: true
+                controls: false
+                source: true
+              shortcuts:
+                columns: 1
+                buttons:
+                  - name: Desligar
+                    icon: mdi:power-plug-off-outline
+                    type: service
+                    id: switch.turn_off
+                    data:
+                      entity_id: switch.tomada_comoda_socket1
+          - type: custom:mini-media-player
+            entity: media_player.quarto
+            group: false
+            volume_stateless: true
+            toggle_power: true
+            artwork: none
+            source: full
+            sound_mode: full
+            info: scroll
+            replace_mute: next
+            icon: mdi:cast-audio
+            name: Google Nest
+            hide:
+              power: true
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Outras informações
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: energy-distribution
+            link_dashboard: true
+          - type: custom:mushroom-template-card
+            primary: Máquina de lavar
+            secondary: >-
+              {% if is_state("sensor.lavadora_com_abertura_frontal", "on") %}
+
+              Ligada no modo: {{
+              state_attr("sensor.lavadora_com_abertura_frontal",
+              "current_course") }}
+
+              Agora está: {{ state_attr("sensor.lavadora_com_abertura_frontal",
+              "run_state") }}
+
+              {{ state_attr("sensor.lavadora_com_abertura_frontal",
+              "initial_time") }} tempo total de lavagem: Faltam {{
+              state_attr("sensor.lavadora_com_abertura_frontal", "remain_time")
+              }} até acabar.
+
+              {% else %}
+
+              Desligada
+
+              {% endif %}
+            icon: mdi:tumble-dryer
+            entity: sensor.lavadora_com_abertura_frontal
+            multiline_secondary: true
+            icon_color: >-
+              {{ "indigo" if is_state("sensor.lavadora_com_abertura_frontal",
+              "on") else "" }}
+            tap_action:
+              action: more-info
+            fill_container: true
+            badge_color: ''
+      - type: vertical-stack
+        cards:
+          - show_current: true
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.forecast_casa
+            forecast_type: daily
+            name: em casa
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Sala
+                    secondary: >-
+                      {{states('sensor.rm4_pro_temperatura') | int }}°C |
+                      {{states('sensor.rm4_pro_umidade') | int }}%
+                    icon: mdi:sofa
+                    layout: vertical
+                    icon_color: |2
+                       {{ "yellow" if is_state("light.sala", "on") else ""
+                        }}
+                    entity: light.sala
+                  - type: custom:mushroom-template-card
+                    primary: Garagem
+                    secondary: >-
+                      {{states('sensor.th_garagem_temperatura') | int }}°C |
+                      {{states('sensor.th_garagem_umidade') | int }}%
+                    icon: mdi:garage
+                    layout: vertical
+                    icon_color: |2
+                       {{ "yellow" if is_state("light.garagem", "on") else ""
+                        }}
+                    entity: light.garagem
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Escritório
+                    secondary: >-
+                      {{states('sensor.sonoff_1000af0421_temperature') | int
+                      }}°C | {{states('sensor.sonoff_1000af0421_humidity') | int
+                      }}%
+                    icon: mdi:desktop-tower-monitor
+                    layout: vertical
+                    entity: light.escritorio
+                    icon_color: |2
+                       {{ "yellow" if is_state("light.escritorio", "on") else ""
+                        }}
+                  - type: custom:mushroom-template-card
+                    primary: Suíte
+                    secondary: >-
+                      {{states('sensor.th_suite_temperatura') | int }}°C |
+                      {{states('sensor.th_suite_umidade') | int }}%
+                    icon: mdi:bed-double
+                    layout: vertical
+                    icon_color: |2
+                       {{ "yellow" if is_state("light.suite", "on") else ""
+                        }}
+                    entity: light.suite
+                  - type: custom:mushroom-template-card
+                    primary: Banheiro
+                    secondary: >-
+                      {{states('sensor.th_banheiro_temperatura') | int }}°C |
+                      {{states('sensor.th_banheiro_umidade') | int }}%
+                    icon: mdi:scale-bathroom
+                    layout: vertical
+                    icon_color: ''
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Lista de compras
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-template-card
+                primary: Mercado
+                secondary: |-
+                  {% if is_state("todo.mercado", "0") %}
+                    Não tem nada
+                  {% else %}
+                   Há {{ states('todo.mercado') }} itens
+                  {% endif %}  
+                icon: mdi:cart
+                entity: todo.mercado
+                icon_color: '{{ "green" if is_state("todo.mercado", "0") else "red" }}'
+                fill_container: true
+                badge_color: ''
+                layout: vertical
+                multiline_secondary: false
+                tap_action:
+                  action: none
+              - type: custom:mushroom-template-card
+                primary: Fruteira
+                secondary: |-
+                  {% if is_state("todo.farmacia", "0") %}
+                    Não tem nada
+                  {% else %}
+                   Há {{ states('todo.farmacia') }} itens
+                  {% endif %}  
+                icon: mdi:fruit-cherries
+                entity: todo.farmacia
+                icon_color: '{{ "green" if is_state("todo.farmacia", "0") else "red" }}'
+                fill_container: true
+                badge_color: ''
+                tap_action:
+                  action: none
+                layout: vertical
+              - type: custom:mushroom-template-card
+                primary: Farmácia
+                secondary: |-
+                  {% if is_state("todo.fruteira", "0") %}
+                    Não tem nada
+                  {% else %}
+                   Há {{ states('todo.fruteira') }} itens
+                  {% endif %}  
+                icon: mdi:medication
+                entity: todo.fruteira
+                icon_color: '{{ "green" if is_state("todo.fruteira", "0") else "red" }}'
+                fill_container: true
+                badge_color: ''
+                tap_action:
+                  action: none
+                layout: vertical
+    icon: mdi:home
+    subview: false
+  - title: Iluminação
+    path: o
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            entity: light.luzes_internas
+            name: Iluminação interna
+            icon: mdi:lightbulb-group
+            show_label: true
+            state:
+              - color: green
+                label: Ligada
+                operator: template
+                styles:
+                  label:
+                    - color: green
+                value: |
+                  [[[ return states['light.luzes_internas'].state === 'on' ]]]
+              - color: '#FF8F00'
+                label: Desligada
+                operator: default
+                styles:
+                  label:
+                    - color: '#FF8F00'
+            styles:
+              card:
+                - height: 100px
+                - filter: opacity(85%)
+              label:
+                - font-size: 13px
+              name:
+                - font-weight: 500
+                - font-size: 15px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-light-card
+                entity: light.cozinha
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.sala
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-light-card
+                entity: light.suite
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.quarto_de_visitas
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.escritorio
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-light-card
+                entity: light.corredor
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.cozinha
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+          - type: custom:button-card
+            entity: light.luzes_externas
+            name: Iluminação externa
+            icon: mdi:lightbulb-group
+            show_label: true
+            state:
+              - color: green
+                label: Ligada
+                operator: template
+                styles:
+                  label:
+                    - color: green
+                value: |
+                  [[[ return states['light.luzes_externas'].state === 'on' ]]]
+              - color: '#FF8F00'
+                label: Desligada
+                operator: default
+                styles:
+                  label:
+                    - color: '#FF8F00'
+            styles:
+              card:
+                - height: 100px
+                - filter: opacity(85%)
+              label:
+                - font-size: 13px
+              name:
+                - font-weight: 500
+                - font-size: 15px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-light-card
+                entity: light.lavanderia
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.garagem
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+              - type: custom:mushroom-light-card
+                entity: light.lateral
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+                icon: mdi:string-lights
+              - type: custom:mushroom-light-card
+                entity: light.lateral
+                layout: vertical
+                use_light_color: true
+                show_brightness_control: true
+                show_color_temp_control: true
+                collapsible_controls: true
+                show_color_control: true
+                fill_container: true
+                icon: mdi:light-flood-down
+                name: Arandela
+          - type: entities
+            entities:
+              - entity: automation.desligar_luz_da_escada
+                secondary_info: none
+                name: 'Luz da escada '
+                icon: mdi:lightbulb-question
+              - entity: automation.desligar_luz_do_corredor
+                name: Luz do corredor
+                secondary_info: none
+                icon: mdi:lightbulb-question
+              - entity: automation.desligar_luz_lateral_as_23_horas
+                icon: mdi:lightbulb-question
+            title: 'Previnir esquecimento '
+            state_color: true
+    icon: mdi:lightbulb
+    type: panel
+  - theme: Backend-selected
+    title: Climatização
+    path: a
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Escritório
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.sonoff_1000af0421_temperature
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+                  extrema: true
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.sonoff_1000af0421_humidity
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+                  extrema: true
+          - type: thermostat
+            entity: climate.escritorio
+            name: Ar condicionado
+            features:
+              - type: climate-fan-modes
+                style: dropdown
+              - type: climate-hvac-modes
+              - type: climate-swing-modes
+                style: dropdown
+            show_current_as_primary: false
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Suíte
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.th_suite_temperatura
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+                  extrema: true
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.th_suite_umidade
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+                  extrema: true
+          - type: thermostat
+            entity: climate.suite
+            name: Ar condicionado
+            features:
+              - type: climate-fan-modes
+                style: dropdown
+              - type: climate-hvac-modes
+              - type: climate-swing-modes
+                style: dropdown
+            show_current_as_primary: false
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Sala/cozinha
+            styles:
+              card:
+                - height: 40px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_temperatura
+                line_color: var(--accent-color)
+                line_width: 3
+                font_size: 75
+                name: Temperatura
+                show:
+                  labels: false
+                  extrema: true
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.rm4_pro_umidade
+                line_color: blue
+                line_width: 3
+                font_size: 75
+                name: Umidade
+                show:
+                  labels: false
+                  extrema: true
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                color: var(--card-background-color)
+                color_type: label-card
+                name: Garagem
+                styles:
+                  card:
+                    - height: 40px
+                    - font-size: 18px
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mini-graph-card
+                    entities:
+                      - sensor.th_garagem_temperatura
+                    line_color: var(--accent-color)
+                    line_width: 3
+                    font_size: 75
+                    name: Temperatura
+                    show:
+                      labels: false
+                      extrema: true
+                  - type: custom:mini-graph-card
+                    entities:
+                      - sensor.th_garagem_umidade
+                    line_color: blue
+                    line_width: 3
+                    font_size: 75
+                    name: Umidade
+                    show:
+                      labels: false
+                      extrema: true
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                color: var(--card-background-color)
+                color_type: label-card
+                name: Banheiro
+                styles:
+                  card:
+                    - height: 40px
+                    - font-size: 18px
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mini-graph-card
+                    entities:
+                      - sensor.th_banheiro_temperatura
+                    line_color: var(--accent-color)
+                    line_width: 3
+                    font_size: 75
+                    name: Temperatura
+                    show:
+                      labels: false
+                      extrema: true
+                  - type: custom:mini-graph-card
+                    entities:
+                      - sensor.th_banheiro_umidade
+                    line_color: blue
+                    line_width: 3
+                    font_size: 75
+                    name: Umidade
+                    show:
+                      labels: false
+                      extrema: true
+    icon: mdi:thermometer-lines
+  - title: Energia
+    path: energia
+    type: sidebar
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: energy-usage-graph
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: custom:button-card
+                    color: var(--card-background-color)
+                    color_type: label-card
+                    name: Informações em tempo real
+                    styles:
+                      card:
+                        - height: 40px
+                        - font-size: 18px
+                  - type: horizontal-stack
+                    cards:
+                      - type: custom:mini-graph-card
+                        entities:
+                          - sensor.total_power
+                        line_color: green
+                        line_width: 3
+                        font_size: 75
+                        name: Consumo
+                        hours_to_show: 6
+                        icon: mdi:lightning-bolt
+                        show:
+                          labels: false
+                          extrema: true
+                      - type: custom:mini-graph-card
+                        entities:
+                          - sensor.tensao_entrada
+                        line_color: green
+                        line_width: 3
+                        font_size: 75
+                        name: Tensão de entrada
+                        hours_to_show: 6
+                        icon: mdi:lightning-bolt
+                        show:
+                          labels: false
+                          extrema: true
+                      - type: custom:mini-graph-card
+                        entities:
+                          - sensor.dp_freq
+                        line_color: green
+                        line_width: 3
+                        font_size: 75
+                        name: Frequência
+                        hours_to_show: 6
+                        icon: mdi:sine-wave
+                        show:
+                          labels: false
+                          extrema: true
+              - type: entities
+                entities:
+                  - entity: sensor.kwh_gasto_mes_ac_suite
+                    name: AC suíte
+                    secondary_info: last-changed
+                  - entity: sensor.kwh_gasto_mes_ac_escritorio
+                    name: AC escritório
+                    secondary_info: last-changed
+                  - entity: sensor.kwh_gasto_mes_casa
+                    secondary_info: last-updated
+                    name: Consumo total
+                title: Consumo mensal
+      - type: entities
+        entities:
+          - entity: switch.regua_sala_tomada_1
+            name: Receptor e TV (sala)
+            icon: mdi:lightning-bolt
+          - entity: switch.regua_sala_tomada_3
+            name: Soundbar
+            icon: mdi:lightning-bolt
+          - entity: switch.sonoff_1000af0421
+            name: Workstation
+            icon: mdi:lightning-bolt
+          - entity: switch.tomada_comoda_tomada_1
+            name: TV do quarto
+        title: Outros controles
+        state_color: true
+    icon: mdi:lightning-bolt
+  - theme: Backend-selected
+    title: Dispositivos
+    path: disposito
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                color: var(--card-background-color)
+                color_type: label-card
+                name: Mikrotik RB952Ui
+                styles:
+                  card:
+                    - height: 48px
+                    - font-size: 18px
+              - type: horizontal-stack
+                cards:
+                  - type: gauge
+                    entity: sensor.rb952_hap_ac_lite_cpu_load
+                    name: CPU
+                    needle: false
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+                  - type: gauge
+                    entity: sensor.rb952_hap_ac_lite_memory_usage
+                    name: RAM
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+                  - type: gauge
+                    entity: sensor.rb952_hap_ac_lite_hdd_usage
+                    name: Armazenamento
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+              - type: entities
+                entities:
+                  - entity: sensor.wireless_connected_clients_rb952_2g_antoni
+                    name: Dispositivos conectados em 2.4Ghz (ANTONI)
+                    icon: mdi:numeric
+                    secondary_info: last-changed
+                  - entity: sensor.wireless_connected_clients_rb952_2g_iot
+                    name: Dispositivos conectados em 2.4Ghz (iot)
+                    icon: mdi:numeric
+                    secondary_info: last-updated
+                  - entity: sensor.wireless_connected_clients_rb952_5g
+                    secondary_info: last-changed
+                    name: Dispositivos conectados em 5.8Ghz (ANTONI)
+                    icon: mdi:numeric
+                  - entity: sensor.rb952_hap_ac_lite_uptime
+                    secondary_info: none
+                    name: Uptime
+                state_color: false
+          - show_name: true
+            show_icon: true
+            show_state: true
+            type: glance
+            entities:
+              - entity: sensor.internet_speed_in
+              - entity: sensor.internet_speed_out
+            title: Uso da Internet
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Mikrotik RB951Ui
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: horizontal-stack
+            cards:
+              - type: gauge
+                entity: sensor.rb951_rb951ui_2hnd_cpu_load
+                name: CPU
+                needle: false
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.rb951_rb951ui_2hnd_memory_usage
+                name: RAM
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+              - type: gauge
+                entity: sensor.rb951_rb951ui_2hnd_hdd_usage
+                name: Armazenamento
+                severity:
+                  green: 0
+                  yellow: 70
+                  red: 90
+          - type: entities
+            entities:
+              - entity: binary_sensor.mikrotik_rb951ui
+                name: Status da conexão
+                secondary_info: last-updated
+              - entity: sensor.wireless_connected_clients_rb951_2g_antoni
+                name: Dispositivos conectados em 2.4Ghz (ANTONI)
+                icon: mdi:numeric
+                secondary_info: last-changed
+              - entity: sensor.wireless_connected_clients_rb951_2g_iot
+                name: Dispositivos conectados em 2.4Ghz (iot)
+                icon: mdi:numeric
+                secondary_info: last-updated
+              - entity: sensor.rb951_rb951ui_2hnd_uptime
+                secondary_info: none
+                name: Uptime
+            state_color: false
+          - type: vertical-stack
+            cards:
+              - type: custom:button-card
+                color: var(--card-background-color)
+                color_type: label-card
+                name: Raspberry PI
+                styles:
+                  card:
+                    - height: 48px
+                    - font-size: 18px
+              - type: horizontal-stack
+                cards:
+                  - type: gauge
+                    entity: sensor.system_monitor_uso_do_processador
+                    name: CPU
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+                  - type: gauge
+                    entity: sensor.system_monitor_uso_de_memoria_2
+                    name: RAM
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+                    unit: '%'
+                  - type: gauge
+                    entity: sensor.system_monitor_uso_do_disco_2
+                    name: Armazenamento
+                    severity:
+                      green: 0
+                      yellow: 70
+                      red: 90
+      - type: vertical-stack
+        cards:
+          - type: custom:button-card
+            color: var(--card-background-color)
+            color_type: label-card
+            name: Outros
+            styles:
+              card:
+                - height: 48px
+                - font-size: 18px
+          - type: entities
+            entities:
+              - entity: sensor.th_banheiro_bateria
+                name: TH banheiro
+                secondary_info: last-changed
+              - entity: sensor.th_garagem_bateria
+                name: TH garagem
+                secondary_info: last-updated
+              - entity: sensor.th_suite_estado_da_bateria
+                name: TH suíte
+                secondary_info: last-updated
+              - entity: sensor.porta_cozinha_bateria
+                secondary_info: last-updated
+                name: Porta da cozinha
+              - entity: sensor.porta_da_frente_bateria
+                secondary_info: last-updated
+                name: Porta da frente
+              - entity: binary_sensor.rpi_power_status
+                name: Raspberry PI Power status
+          - type: entities
+            entities:
+              - entity: switch.rb951_visitante_port
+                secondary_info: last-changed
+                name: Roteador sala
+                icon: mdi:wifi-arrow-left-right
+              - entity: switch.rb952_visitante_port
+                secondary_info: last-changed
+                icon: mdi:wifi-arrow-left-right
+                name: Roteador escritório
+            title: Wifi visitante
+            state_color: true
+    icon: mdi:devices

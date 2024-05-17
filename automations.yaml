@@ -24,59 +24,6 @@
     data:
       message: O home assistant foi iniciado
   mode: single
-- id: '1602764696297'
-  alias: ' Notificação chegada - Lucimara '
-  description: ''
-  trigger:
-  - platform: zone
-    entity_id: person.lucimara
-    zone: zone.home
-    event: enter
-  condition: []
-  action:
-  - service: notify.notifier_marco
-    data:
-      message: A loka tá chegando em casa
-  mode: single
-- id: '1604098762827'
-  alias: Ligar luz da entrada - Lucimara
-  description: Liga a luz da entrada quando a Lucimara chegar e a desliga após um
-    tempo
-  trigger:
-  - platform: zone
-    entity_id: person.lucimara
-    zone: zone.home
-    event: enter
-  condition: []
-  action:
-  - service: light.turn_on
-    data: {}
-    target:
-      entity_id: light.sonoff_10012bf028
-  - delay:
-      hours: 0
-      minutes: 3
-      seconds: 0
-      milliseconds: 0
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.sonoff_10012bf028
-  mode: single
-- id: '1604098813198'
-  alias: ' Notificação chegada - Marco'
-  description: ''
-  trigger:
-  - platform: zone
-    entity_id: person.marco_antoni
-    zone: zone.home
-    event: enter
-  condition: []
-  action:
-  - service: notify.mobile_app_motorola_one_zoom
-    data:
-      message: Crocodillo tá chegando em casa
-  mode: single
 - id: '1639684900205'
   alias: Monitor WAN in
   description: ''
@@ -123,56 +70,12 @@
       message: 'A umidade relativa do ar está acima de 90%. '
       title: Alerta de umidade do ar
   mode: single
-- id: '1640121972039'
-  alias: Notificação - temperatura do aquário acima de 29,5º
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.sonoff_1000af0421_temperature
-    above: '29.5'
-  condition: []
-  action:
-  - service: notify.mobile_app_celular_marco
-    data:
-      title: Aviso
-      data: A temperatura do aquário está acima de 29,5°.
-  mode: single
-- id: '1657543576488'
-  alias: Ligar luz do aquário
-  description: ''
-  trigger:
-  - platform: time_pattern
-    hours: '18'
-    minutes: '0'
-    seconds: '0'
-  condition: []
-  action:
-  - service: switch.turn_on
-    data: {}
-    target:
-      device_id: ebbc4ba6ac6cdf267b7de04a09e38b81
-  mode: single
-- id: '1657543632754'
-  alias: Desligar luz do aquário
-  description: ''
-  trigger:
-  - platform: time_pattern
-    hours: '22'
-    minutes: '0'
-    seconds: '0'
-  condition: []
-  action:
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.sonoff_1000755706
-  mode: single
 - id: '1660067646866'
   alias: 'Notificação: saindo do IFRS'
   description: ''
   trigger:
   - platform: zone
-    entity_id: person.marco_antoni
+    entity_id: device_tracker.celular_marco
     zone: zone.ifrs
     event: leave
   condition: []
@@ -204,24 +107,26 @@
   description: Liga a luz da entrada quando o Marco chegar e a desliga após um tempo
   trigger:
   - platform: zone
-    entity_id: person.marco_antoni
+    entity_id: device_tracker.celular_marco
     zone: zone.home
     event: enter
-  condition: []
+  condition:
+  - condition: sun
+    after: sunset
   action:
   - service: light.turn_on
     data: {}
     target:
-      entity_id: light.sonoff_10012bf028
+      entity_id: light.garagem
   - delay:
       hours: 0
-      minutes: 3
+      minutes: 4
       seconds: 0
       milliseconds: 0
   - service: light.turn_off
     data: {}
     target:
-      entity_id: light.sonoff_10012bf028
+      entity_id: light.garagem
   mode: single
 - id: '1680990596583'
   alias: Umidificar ar do quarto em 50%
@@ -262,7 +167,7 @@
   - service: switch.turn_off
     data: {}
     target:
-      entity_id: switch.tvlg_power
+      entity_id: switch.tv_sala_power
   mode: single
 - id: '1689271852331'
   alias: LG SP8A
@@ -276,4 +181,89 @@
     data: {}
     target:
       entity_id: switch.lgsp8a_ligar
+  mode: single
+- id: '1715219103762'
+  alias: Desligar luz da escada
+  description: Desliga a luz da escada depois de 2 min
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.sonoff_1001f68d45_1
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.sonoff_1001f68d45_1
+  mode: single
+- id: '1715222347190'
+  alias: Desligar luz do corredor
+  description: Desliga a luz do corredor depois de 2 min
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.sonoff_1001f6759c_1
+    from: 'off'
+  condition: []
+  action:
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.sonoff_1001f6759c_1
+  mode: single
+- id: '1715373976399'
+  alias: Desligar luz lateral às 23 horas
+  description: ''
+  trigger:
+  - platform: time_pattern
+    hours: '23'
+    minutes: '00'
+  condition: []
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.sonoff_1001f66abc_1
+  mode: single
+- id: '1715425076106'
+  alias: 'Ligar '
+  description: Liga a luz da entrada quando a Lucimara chegar e a desliga após um
+    tempo
+  trigger:
+  - platform: zone
+    entity_id: device_tracker.celular_lucimara
+    zone: zone.home
+    event: enter
+  condition:
+  - condition: sun
+    after: sunset
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.garagem
+  - delay:
+      hours: 0
+      minutes: 4
+      seconds: 0
+      milliseconds: 0
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.garagem
   mode: single
