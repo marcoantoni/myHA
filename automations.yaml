@@ -23,38 +23,39 @@
   - service: notify.mobile_app_celular_marco
     data:
       message: O home assistant foi iniciado
+      title: Aviso
   mode: single
 - id: '1639684900205'
   alias: Monitor WAN in
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.ether1_wan_in
-  condition: []
-  action:
-  - service: input_number.set_value
-    data_template:
+  triggers:
+  - entity_id:
+    - sensor.ether5_wan_in
+    trigger: state
+  conditions: []
+  actions:
+  - data_template:
       entity_id: input_number.internet_delta_in
       value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int)
         * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated)
         ) }}'
+    action: input_number.set_value
   mode: single
 - id: '1639684951257'
   alias: Monitor WAN out
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.ether1_wan_out
-  condition: []
-  action:
-  - service: input_number.set_value
-    data_template:
+  triggers:
+  - entity_id:
+    - sensor.ether5_wan_out
+    trigger: state
+  conditions: []
+  actions:
+  - data_template:
       entity_id: input_number.internet_delta_out
       value: '{{ ((trigger.to_state.state | int - trigger.from_state.state | int)
         * 8 ) / ( as_timestamp(trigger.to_state.last_updated) - as_timestamp(trigger.from_state.last_updated)
         ) }}'
+    action: input_number.set_value
   mode: single
 - id: '1639851537107'
   alias: 'Alerta: umidade do ar alta'
@@ -70,104 +71,45 @@
       message: 'A umidade relativa do ar está acima de 90%. '
       title: Alerta de umidade do ar
   mode: single
-- id: '1660067646866'
-  alias: 'Notificação: saindo do IFRS'
-  description: ''
-  trigger:
-  - platform: zone
-    entity_id: device_tracker.celular_marco
-    zone: zone.ifrs
-    event: leave
-  condition: []
-  action:
-  - service: notify.mobile_app_celular_lucimara
-    data:
-      message: Crocodillo está saindo do IF
-  mode: single
-- id: '1671132436606'
-  alias: Desligar segunda lampada do escritório
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.sonoff_10012ba9da
-    from: unavailable
-    to: 'on'
-  condition:
-  - condition: time
-    before: '18:00:00'
-  action:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.sonoff_10012ba9da
-  mode: single
 - id: '1674673794168'
   alias: Ligar luz da entrada - Marco
   description: Liga a luz da entrada quando o Marco chegar e a desliga após um tempo
-  trigger:
-  - platform: zone
-    entity_id: device_tracker.celular_marco
+  triggers:
+  - entity_id: device_tracker.celular_marco
     zone: zone.home
     event: enter
-  condition:
+    trigger: zone
+  conditions:
   - condition: sun
     after: sunset
-  action:
-  - service: light.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: light.garagem
+    action: light.turn_on
   - delay:
       hours: 0
-      minutes: 4
+      minutes: 5
       seconds: 0
       milliseconds: 0
-  - service: light.turn_off
-    data: {}
+  - data: {}
     target:
       entity_id: light.garagem
-  mode: single
-- id: '1680990596583'
-  alias: Umidificar ar do quarto em 50%
-  description: Definine o umidificador do quarto em 50% durante a noite
-  trigger:
-  - platform: time
-    at: '21:00:00'
-  condition: []
-  action:
-  - service: humidifier.set_humidity
-    data:
-      humidity: 50
-    target:
-      entity_id: humidifier.umidificador_quarto
-  mode: single
-- id: '1680990702783'
-  alias: Umidificar ar do quarto em 30%
-  description: Define o umidificador do quarto em 30% durante o dia
-  trigger:
-  - platform: time
-    at: 07:00:00
-  condition: []
-  action:
-  - service: humidifier.set_humidity
-    data:
-      humidity: 30
-    target:
-      entity_id: humidifier.umidificador_quarto
+    action: light.turn_off
   mode: single
 - id: '1686854052351'
-  alias: TV LG turn on
+  alias: TV LG turn on - sala
   description: Liga/desliga a televisão ao apertar o botão liga/desliga no media_player
-  trigger:
-  - platform: webostv.turn_on
-    entity_id: media_player.tv_da_sala
-  condition: []
-  action:
-  - service: switch.turn_off
+  triggers:
+  - entity_id: media_player.tv_sala
+    trigger: webostv.turn_on
+  conditions: []
+  actions:
+  - target:
+      entity_id:
+      - switch.tv_sala_power
     data: {}
-    target:
-      entity_id: switch.tv_sala_power
+    action: switch.turn_on
   mode: single
 - id: '1689271852331'
   alias: LG SP8A
@@ -226,8 +168,96 @@
       entity_id: switch.sonoff_1001f6759c_1
   mode: single
 - id: '1715373976399'
-  alias: Desligar luz lateral às 23 horas
+  alias: desligar_luzes_externas
+  description: Desliga a luz lateral e a oliveira às 23 horas
+  triggers:
+  - trigger: time
+    at: input_datetime.desligar_luzes
+  conditions: []
+  actions:
+  - metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - switch.sonoff_1001f66abc_1
+      - switch.sonoff_1000755706
+      - switch.sonoff_1001f66c33_1
+    action: switch.turn_off
+  mode: single
+- id: '1716843469717'
+  alias: Liga a luz da oliveira ao escurecer
+  description: Liga a luz da oliveira 20 minutos após o sol se por
+  triggers:
+  - event: sunset
+    trigger: sun
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 20
+      seconds: 0
+      milliseconds: 0
+  - metadata: {}
+    data: {}
+    target:
+      entity_id: switch.sonoff_1000755706
+    action: switch.turn_on
+  mode: single
+- id: '1716843841807'
+  alias: TV LG ao ligar
   description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - media_player.tv_sala
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - data:
+      sound_output: tv_speaker
+      entity_id: media_player.tv_sala
+    action: webostv.select_sound_output
+  - data:
+      volume_level: 0.1
+    action: media_player.volume_set
+    target:
+      entity_id: media_player.tv_sala
+  mode: single
+- id: '1716847534837'
+  alias: 'Ligar luz da entrada - Lucimara '
+  description: Liga a luz da entrada quando a Lucimara chegar e a desliga após um
+    tempo
+  triggers:
+  - entity_id: device_tracker.celular_lucimara
+    zone: zone.home
+    event: enter
+    trigger: zone
+  conditions:
+  - condition: sun
+    after: sunset
+  actions:
+  - data: {}
+    target:
+      entity_id:
+      - light.garagem
+      - light.lateral
+    action: light.turn_on
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - data: {}
+    target:
+      entity_id:
+      - light.garagem
+      - light.lateral
+    action: light.turn_off
+  mode: single
+- id: '1722888905395'
+  alias: Desligar o purificador de água
+  description: Desliga o purificador de água às 23 horas
   trigger:
   - platform: time_pattern
     hours: '23'
@@ -238,32 +268,364 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.sonoff_1001f66abc_1
+      entity_id: switch.purificador_interruptor
   mode: single
-- id: '1715425076106'
-  alias: 'Ligar '
-  description: Liga a luz da entrada quando a Lucimara chegar e a desliga após um
-    tempo
-  trigger:
-  - platform: zone
-    entity_id: device_tracker.celular_lucimara
-    zone: zone.home
-    event: enter
-  condition:
-  - condition: sun
-    after: sunset
-  action:
-  - service: light.turn_on
-    data: {}
-    target:
-      entity_id: light.garagem
+- id: '1723504269402'
+  alias: Desligar exaustor da churrasqueira
+  description: Desliga o exaustor da churrasqueira 90 minutos após ele ser ligado.
+  triggers:
+  - entity_id:
+    - switch.sonoff_100049e5fc
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions: []
+  actions:
   - delay:
-      hours: 0
-      minutes: 4
+      hours: 1
+      minutes: 30
       seconds: 0
       milliseconds: 0
-  - service: light.turn_off
+  - target:
+      entity_id: switch.sonoff_100049e5fc
+    data: {}
+    action: switch.turn_off
+  mode: single
+- id: '1725024905335'
+  alias: Rotinas ao despertar - Marco
+  description: Executa as rotinas 10 minutos antes do celular despertar
+  trigger:
+  - platform: template
+    value_template: '{{ (as_timestamp(states(''sensor.celular_marco_next_alarm''))
+      - as_timestamp(now())) <= 300 }}'
+  condition:
+  - condition: state
+    entity_id: person.marco_antoni
+    state: home
+  action:
+  - target:
+      entity_id: switch.power_monitor_3_interruptor_1
+    action: switch.turn_on
+    data: {}
+  mode: single
+- id: '1740938449263'
+  alias: Ligar ar condicionado escritório
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.sonoff_1000af0421_temperature
+    above: 34
+  conditions: []
+  actions:
+  - action: climate.turn_on
+    metadata: {}
     data: {}
     target:
-      entity_id: light.garagem
+      entity_id: climate.escritorio
+  - action: climate.set_temperature
+    metadata: {}
+    data:
+      temperature: 28
+      hvac_mode: cool
+    target:
+      entity_id: climate.escritorio
+  - delay:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  - action: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: climate.escritorio
+  mode: single
+- id: '1741102881811'
+  alias: Desligar ar condicioado suíte
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: '07'
+    minutes: '30'
+    seconds: '00'
+  conditions: []
+  actions:
+  - action: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id: 5a61449f6a774af5cfa1a8116448e278
+  mode: single
+- id: '1741649734472'
+  alias: Ligar ar condicionado suíte
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.temp_suite
+    above: 24
+  conditions:
+  - condition: zone
+    entity_id: device_tracker.celular_marco
+    zone: zone.home
+  - condition: time
+    after: '22:00:00'
+  actions:
+  - action: climate.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: climate.suite
+  - action: climate.set_temperature
+    metadata: {}
+    data:
+      temperature: 22
+      hvac_mode: cool
+    target:
+      entity_id: climate.suite
+  mode: single
+- id: '1741650001446'
+  alias: Desligar o purificador quando Marco chega no IFRS
+  description: Desliga o purificador quando Marco chegar no IFRS
+  triggers:
+  - trigger: zone
+    entity_id: person.marco_antoni
+    zone: zone.ifrs
+    event: enter
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 30
+      seconds: 0
+      milliseconds: 0
+  - metadata: {}
+    data: {}
+    target:
+      entity_id: switch.purificador_interruptor
+    action: switch.turn_off
+  mode: single
+- id: '1743380810027'
+  alias: Luz da cozinha quente durante a noite
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.cozinha
+    to: 'on'
+  conditions:
+  - condition: time
+    after: input_datetime.luzes_quentes
+  actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 3000
+    target:
+      entity_id: light.luminaria_cozinha
+  mode: single
+- id: '1743467873821'
+  alias: Definir horário desligamento luzes externas
+  description: ''
+  triggers:
+  - event: start
+    trigger: homeassistant
+  conditions:
+  - condition: template
+    value_template: '{{ states(''input_datetime.desligar_luzes'') in [''unknown'',
+      ''unavailable'', ''none''] }}'
+  actions:
+  - target:
+      entity_id: input_datetime.horario_personalizado
+    data:
+      time: '22:30:00'
+    action: input_datetime.set_datetime
+  mode: single
+- id: '1743637182466'
+  alias: Luz da sala quente durante a noite
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.luminaria_sala
+    to: 'on'
+  conditions:
+  - condition: time
+    after: input_datetime.luzes_quentes
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 3000
+    target:
+      entity_id: light.luminaria_sala
+  mode: single
+- id: '1743637312736'
+  alias: Luz fria da cozinha durante o dia
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.cozinha
+    to: 'on'
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: '18:00:00'
+  actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 6500
+    target:
+      entity_id: light.luminaria_cozinha
+  mode: single
+- id: '1743637340814'
+  alias: Luz fria da sala durante o dia
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.luminaria_sala
+    to: 'on'
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: '18:00:00'
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 6500
+    target:
+      entity_id: light.luminaria_sala
+  mode: single
+- id: '1743637485075'
+  alias: Luz fria da suíte durante o dia
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.suite
+    to: 'on'
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: '18:00:00'
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 6500
+    target:
+      entity_id: light.suite
+  mode: single
+- id: '1743637785250'
+  alias: Luz da sala quente durante a noite
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.suite
+    to: 'on'
+  conditions:
+  - condition: time
+    after: input_datetime.luzes_quentes
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      kelvin: 3000
+    target:
+      entity_id:
+      - light.suite
+  mode: single
+- id: '1759518363996'
+  alias: Sensor de movimento suíte
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sensor_presenca_suite_occupancy
+    to: 'on'
+  conditions:
+  - condition: time
+    after: '22:00:00'
+    before: 09:00:00
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.controlador_rgb_suite
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.controlador_rgb_suite
+  mode: single
+- id: '1759586525943'
+  alias: 'Alerta: bateria baixa do tablet'
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.sm_p615_battery_level
+    below: 15
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - action: notify.mobile_app_celular_marco
+    data:
+      message: '{% set nivel = states(''sensor.sm_p615_battery_level'') | int(0) %}
+        A bateria está em {{ nivel }}%. Coloque-o para carregar.
+
+        '
+      title: A bateria do tablet está baixa
+  mode: single
+- id: '1759678822871'
+  alias: Ligar fita Led TV suíte ao iniciar o plex
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.plex_plex_for_lg_lg_43ut8000psa_awzfljz
+    from: unavailable
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.controlador_rgb_suite
+  mode: single
+- id: '1759774813096'
+  alias: 'Alerta: Zigbee2mqtt parou '
+  description: Notifica que o Zigbee2mqtt parou de funcionar
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.zigbee2mqtt_bridge_connection_state
+    from: 'on'
+  conditions: []
+  actions:
+  - action: notify.mobile_app_celular_marco
+    metadata: {}
+    data:
+      title: Problemas com o Zigbee2mqtt
+      message: O Zigbee2mqtt parou de funcionar.
   mode: single

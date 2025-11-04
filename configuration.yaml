@@ -2,47 +2,206 @@
 default_config:
 
 # Text to speech
-tts:
-  - platform: google_translate
-  
+#tts:
+#  - platform: google_translate
+
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 switch: !include switch.yaml
+utility_meter: !include utility_meter.yaml
 
 ############################################
 ### CONFIGURAÇÃO HTTPS
 ############################################
 http:
-    base_url: antoniha.duckdns.org
+    base_url: !secret dominio
     server_port: 8123
-    ssl_certificate: /ssl/fullchain.pem
-    ssl_key: /ssl/privkey.pem
-    
+    use_x_forwarded_for: true
+    trusted_proxies:
+      - 172.30.33.0/24
+      - 192.168.1.0/24 
+    ip_ban_enabled: true
+    login_attempts_threshold: 5
+
 ############################################
 ### INTEGRAÇÃO SONOFF
 ############################################
 sonoff:
-    username: marco.antoni910@gmail.com
-    password: !secret ewelinkapp
-    force_update: [temperature]
-    scan_interval: '00:00:01'  # (optional) default 5 minutes
-    sensors: [temperature, humidity]
-    mode: cloud
-    reload: always  # update device list every time HA starts
+     username: marco.antoni910@gmail.com
+     password: !secret ewelinkapp
+     force_update: [temperature]
+     scan_interval: '00:05:00'  # (optional) default 5 minutes
+     sensors: [temperature, humidity]
+     mode: local
+     reload: always  # update device list every time HA starts
 
 ############################################
 ### CONFIGURAÇÃO GOOGLE ASSISTANT
 ############################################
 # Example configuration.yaml entry
 google_assistant:
-  project_id: home-assistant-362622
+  project_id: !secret google_project
   service_account: !include SERVICE_ACCOUNT.JSON
   report_state: true
-  exposed_domains:
-    - switch
-    - light
+  expose_by_default: false
+  entity_config:
+    switch.regua_sala_tomada_1:
+      name: "TV da sala"
+      expose: true
+    switch.regua_sala_tomada_3:
+      name: "Soundbar"
+      expose: true
+    switch.regua_suite_socket4:
+      name: "TV do quarto"
+      expose: true
+    switch.sonoff_100049e5fc:
+      name: "Exaustor da churrasqueira"
+      expose: true
+    switch.purificador_interruptor:
+      expose: true
+      name: "Purificador"
+    switch.aparelho_mosquito_interruptor:
+      name: "Aparelho de mosquito"
+      expose: true
+    light.suite:
+      name: "Suíte"
+      expose: true
+    light.luminaria_sala:
+      name: "Luz da sala"
+      expose: true
+    light.teto_sala:
+      name: "Led do teto"
+      expose: true
+    light.ledtv_sala:
+      name: "Led TV"
+      expose: true
+    light.bar:
+      name: "Bar"
+      expose: true
+    light.cozinha:
+      name: "Luz da cozinha"
+      expose: true
+#    light.teto_cozinha:
+#      name: "Led do teto"
+#      expose: true
+#    light.spot:
+#      name: "Spot"
+#      expose: true
+    light.painel:
+      name: "Painel"
+      expose: true
+    light.lavanderia:
+      name: "Lavanderia"
+      expose: true
+    light.garagem:
+      name: "Garagem"
+      expose: true
+    light.lateral:
+      name: "Lateral"
+      expose: true
+    light.oliveira:
+      name: "Oliveira"
+      expose: true
+    light.arandela:
+      name: "Arandela"
+      expose: true
+    light.suite_display_light:
+      name: "Ar condicionado"
+      expose: true  
+    light.controlador_rgb_suite:
+      name: "LED tev"
+      expose: true  
+    light.escada:
+      name: "Escada"
+      expose: true  
+    light.luzes_externas:
+      name: "Luzes externas"
+      expose: true  
+    climate.escritorio:
+      name: "Ar condionado"
+      expose: true
+    climate.sala:
+      name: "Ar condionado"
+      expose: true
+    climate.suite:
+      name: "Ar condionado"
+      expose: true
+    media_player.tv_sala:
+      name: "TV"
+      expose: true
+    media_player.tv_suite:
+      name: "TV"
+      expose: true
+    script.modo_cinema:
+      name: "Modo cinema"
+      expose: true
+    script.desligar_tudo:
+      name: "Desligar tudo"
+      expose: true
       
+template:
+  - sensor:
+      - name: "Energia produzida"
+        unique_id: energia_produzida
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        device_class: energy
+        state: >
+          {{ states('sensor.prod_solar_forward_energy_b') }}
+          
+      - name: "Energia devolvida à rede"
+        unique_id: energia_excedente
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        device_class: energy
+        #icon: mdi:solar-power
+        state: >
+          {{ states('sensor.reverse_energy_b') }}  
+          
+      - name: "Energia consumida da rede"
+        unique_id: energia_consumida
+        unit_of_measurement: "kWh"
+        state_class: total_increasing
+        device_class: energy
+        state: >
+          {{ states('sensor.forward_energy_b') }}
+          
+      - name: "Produção solar filtrada"
+        unique_id: producao_solar_filtrada
+        unit_of_measurement: "W"
+        state_class: measurement
+        device_class: power
+        state: >
+          {% if states('sensor.prod_solar_total_power') | float < 10 %}
+            0
+          {% else %}
+            {{ states('sensor.prod_solar_total_power') }}
+          {% endif %}
+          
+      - name: "Saldo de Energia"
+        unique_id: saldo_energia
+        unit_of_measurement: "kWh"
+        state_class: measurement
+        device_class: energy
+        state: >
+          {% set injetada = states('sensor.reverse_energy_b') | float(0) %}
+          {% set consumida = states('sensor.forward_energy_b') | float(0) %}
+          {% set ajusteConsumo = 2968 %}
+          {% set ajusteInjetada = 43 %}
+          {{ ( (consumida - ajusteConsumo) -(injetada - ajusteInjetada) ) * -1 | round(2) }}
+          
+      - name: "Portas Ethernet Conectadas"
+        state: >
+          {% set portas = states.switch
+             | selectattr('entity_id', 'match', 'switch\\.(c52ig|rb952ui)_ether')
+             | selectattr('attributes.running', 'eq', True)
+             | list | count %}
+          {% set total = (portas - 1) if portas > 0 else 0 %}
+          {{ total }}
+        unit_of_measurement: ""
+        icon: mdi:ethernet
+
 ############################################
 ### SENSORES
 ############################################
@@ -59,64 +218,105 @@ sensor:
             unit_of_measurement: '%'
             value_template: "{{ state_attr('weather.home', 'humidity') }}"
 
-  - platform: template
-    sensors:
-      washer_cycle_state:
-        value_template: '{{state_attr(''sensor.lavadora_com_abertura_frontal'', ''remain_time'')}}'
-        friendly_name: Máquina de lavar
-        icon_template: 'mdi:washing-machine'
+        washer_cycle_state:
+          value_template: '{{state_attr(''sensor.lavadora_com_abertura_frontal'', ''remain_time'')}}'
+          friendly_name: Máquina de lavar
+          icon_template: 'mdi:washing-machine'
+ 
+        status_portao:
+          friendly_name: "Status do portão"
+          value_template: >
+            {% if is_state('sensor.portao_status', 'False') %}
+              Fechado
+            {% else %}
+              Aberto
+            {% endif %}
+          icon_template: >
+            {% if is_state('sensor.portao_status', 'False') %}
+              mdi:garage
+            {% else %}
+              mdi:garage-open
+            {% endif %}
+            
+        consumo_casa_watts:
+          friendly_name: "Consumo da Casa"
+          unique_id: consumo_casa
+          unit_of_measurement: "W"
+          device_class: power
+          value_template: >
+            {% set producao_solar = states('sensor.producao_solar_filtrada') %}
+            {% set total_power = states('sensor.total_power') %}
 
-    
+            {% if producao_solar not in ['unknown', 'unavailable'] and total_power not in ['unknown', 'unavailable'] %}
+              {% set producao_solar = producao_solar | int(0) %}
+              {% set total_power = total_power | int(0) %}
+              {% if total_power < 0 %}
+                {{ producao_solar + total_power }}
+              {% else %}
+                {{ producao_solar + total_power }}
+            {% endif %}
+            {% else %}
+              unavailable
+            {% endif %}
+        
+            
 # monitoramento SNMP roteador
 # https://forum.homeassistantbrasil.com.br/t/obtendo-o-trafego-da-wan-do-roteador-via-snmp-tempo-real/92
   - platform: snmp
-    name: 'ether1_wan_in'
-    host: 192.168.1.254
-    baseoid: .1.3.6.1.2.1.31.1.1.1.6.3
-    community: 'public'
+    name: 'ether5_wan_in'
+    host: 192.168.1.1
+    baseoid: .1.3.6.1.2.1.31.1.1.1.6.7
+    community: !secret snmp_community
     version: '2c'
+    
   - platform: snmp
-    name: 'ether1_wan_out'
-    host: 192.168.1.254
-    baseoid: .1.3.6.1.2.1.31.1.1.1.10.3
-    community: 'public'
+    name: 'ether5_wan_out'
+    host: 192.168.1.1
+    baseoid: .1.3.6.1.2.1.31.1.1.1.10.7
+    community: !secret snmp_community
     version: '2c'
     
   - platform: snmp
     name: 'wireless_connected_clients_rb952_2g_antoni'
-    host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.1
-    community: 'public'
+    host: 192.168.1.2
+    baseoid: .1.3.6.1.4.1.14988.1.1.1.3.1.6.21
+    community: !secret snmp_community
     version: '2c'
+    value_template: "{{ value | int }}"
+    
+  - platform: snmp
+    name: 'wireless_connected_clients_rb952_5g_antoni'
+    host: 192.168.1.2
+    baseoid: .1.3.6.1.4.1.14988.1.1.1.3.1.6.2
+    community: !secret snmp_community
+    version: '2c'
+    value_template: "{{ value | int }}"
     
   - platform: snmp
     name: 'wireless_connected_clients_rb952_2g_iot'
-    host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.18
-    community: 'public'
+    host: 192.168.1.2
+    baseoid: .1.3.6.1.4.1.14988.1.1.1.3.1.6.1
+    community: !secret snmp_community
     version: '2c'
+    value_template: "{{ value | int }}"
     
-  - platform: snmp
-    name: 'wireless_connected_clients_rb952_5g'
-    host: 192.168.1.254
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.2
-    community: 'public'
-    version: '2c'
     
-  - platform: snmp
-    name: 'wireless_connected_clients_rb951_2g_antoni'
-    host: 192.168.1.253
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
-    community: 'public'
-    version: '2c'
+#  - platform: snmp
+#    name: 'wireless_connected_clients_rb951_2g_iot'
+#    host: 192.168.1.2
+#    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.6
+#    community: 'public'
+#    version: '2c'
+#    value_template: "{{ value | int }}"
     
-  - platform: snmp
-    name: 'wireless_connected_clients_rb951_2g_iot'
-    host: 192.168.1.253
-    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.17
-    community: 'public'
-    version: '2c'
-
+#  - platform: snmp
+#    name: 'wireless_connected_clients_rb951_2g_antoni'
+#    host: 192.168.1.2
+#    baseoid: 1.3.6.1.4.1.14988.1.1.1.3.1.6.21
+#    community: 'public'
+#    version: '2c'
+#    value_template: "{{ value | int }}"
+    
   - platform: template
     sensors:
         internet_speed_in:
@@ -154,54 +354,113 @@ input_number:
         min: 0
         max: 1000000000000
         mode: slider
-    num_clients_wifi:
-        initial: 0
-        min: 0
-        max: 100
-        mode: slider
+    preco_kwh:
+      name: Preço KWh
+      initial: 0.78
+      min: 0
+      max: 1.50
+      step: 0.1
+      mode: box
+      unit_of_measurement: "R$"
+
+input_datetime:
+  desligar_luzes:
+    name: Desligar luzes externas
+    has_time: true
+    has_date: false
+  luzes_quentes:
+    name: Luzes quentes
+    has_time: true
+    has_date: false
+  luzes_fras:
+    name: Luzes frias
+    has_time: true
+    has_date: false
+
+      
     #  fim monitoramento SNMP roteador
-    tarifa_energia_consumida:
-        icon: mdi:currency-brl
-        name: Tarifa de Energia
-        initial: 0
-        min: 0
-        max: 100
-        step: 0.01
-        unit_of_measurement: 'R$/kWh'
-        mode: box
-
-
 light:
   - platform: group
     name: luzes_internas
     entities:
       - light.cozinha
-      - light.sala
+      - light.teto_cozinha
+      - light.spot
+      - light.painel
+      - light.luminaria_sala
+      - light.teto_sala
+      - light.bar
+      - light.ledtv_sala
       - light.escada
       - light.corredor
       - light.suite
       - light.escritorio
-      - light.controller_rgb_fd4174
+      - light.quarto_visitas
       
+  - platform: group
+    name: grupo_sala
+    entities:
+      - light.luminaria_sala
+      - light.teto_sala
+      - light.bar
+      - light.ledtv_sala
+      
+  - platform: group
+    name: grupo_cozinha
+    entities:
+      - light.cozinha
+      - light.teto_cozinha
+      - light.spot
+      - light.painel
+      
+  - platform: group
+    name: sala_e_cozinha
+    entities:
+      - light.luminaria_sala
+      - light.luminaria_cozinha
+      
+#  - platform: group
+#    name: Quarto de visitas
+#    unique_id: quarto_de_visitas
+#    entities:
+#      - light.sonoff_10010acddd
+#      - light.sonoff_10012ba9da
+    
   - platform: group
     name: luzes_externas
     entities:
-      - light.lateral
-      - light.garagem
       - light.lavanderia
-      
-  - platform: group
-    name: Quarto de visitas
-    unique_id: quarto_de_visitas
-    entities:
-      - light.sonoff_10010acddd
-      - light.sonoff_10012ba9da
+      - light.garagem
+      - light.lateral
+      - light.oliveira
+      - light.arandela
 
 shopping_list:
   mercado:
   farmacia:
-  
+
+generic_hygrostat:
+  - name: umidificador_suite
+    unique_id: umidificador_suite
+    humidifier: switch.regua_suite_socket3
+    target_sensor: sensor.th_suite_humidity
+    min_humidity: 30
+    max_humidity: 70
+    target_humidity: 50
+    dry_tolerance: 3
+    wet_tolerance: 0
+    device_class: "humidifier"
+    min_cycle_duration:
+      seconds: 30
+    keep_alive:
+      minutes: 3
+    initial_state: true
+    away_humidity: 35
+    away_fixed: True
+    sensor_stale_duration: 00:15:00
+    
 #climate:
+
 #  - platform: generic_thermostat
 #    unique_id: termonstato_aquario
 #    name: termonstato_aquario
@@ -215,18 +474,18 @@ shopping_list:
 #    target_temp: 28.5
 #    min_cycle_duration:
 #      seconds: 30
-  
+#  
 #  - platform: generic_thermostat 
-#    name: aquecedor_sala
-#    heater: switch.sonoff_10005f57ee
-#    target_sensor: sensor.rm4_pro_temperature
+#    name: aquecedor_suite
+#    heater: switch.purificador
+#    target_sensor: sensor.th_suite_temperatura
 #    min_temp: 13
 #    max_temp: 25
 #    precision: 0.1
 #    cold_tolerance: 0.1 
 #    hot_tolerance: 0
 #    target_temp: 16
-#   min_cycle_duration:
+#    min_cycle_duration:
 #      seconds: 30
 #      
 #  - platform: generic_thermostat 
@@ -241,54 +500,133 @@ shopping_list:
 #    target_temp: 16
 #    min_cycle_duration:
 #      seconds: 30
-    
-   
-generic_hygrostat:
-  - name: umidificador_suite
-    humidifier: switch.sonoff_100049e5fc
-    target_sensor: sensor.th_suite_umidade
-    min_humidity: 30
-    max_humidity: 70
-    target_humidity: 50
-    dry_tolerance: 3
-    wet_tolerance: 0
-    device_class: "humidifier"
+  
+
+mqtt:
+  sensor:
+    # RAM
+    - name: OpenWRT RAM buffered
+      state_topic: collectd/OpenWrt/memory/memory-buffered
+      unit_of_measurement: MB
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | float / 1000000 }}"
+      unique_id: ram_buffered
+    - name: OpenWRT RAM free
+      state_topic: collectd/OpenWrt/memory/memory-free
+      unit_of_measurement: MB
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | float / 1000000 }}"
+      unique_id: ram_free
+    - name: OpenWRT RAM cached
+      state_topic: collectd/OpenWrt/memory/memory-cached
+      unit_of_measurement: MB
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | float / 1000000 }}"
+      unique_id: ram_cached
+    - name: OpenWRT RAM used
+      state_topic: collectd/OpenWrt/memory/memory-used
+      unit_of_measurement: MB
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | float / 1000000 }}"
+      unique_id: ram_used
+
+    # CPU
+    - name: OpenWRT L1
+      unit_of_measurement: load
+      state_topic: collectd/OpenWrt/load/load
+      value_template: "{{ value.split(':')[1] | float }}"
+      unique_id: L1
+    - name: OpenWRT L5
+      unit_of_measurement: load
+      state_topic: collectd/OpenWrt/load/load
+      value_template: "{{ value.split(':')[2] | float }}"
+      unique_id: L5
+    - name: OpenWRT L15
+      unit_of_measurement: load
+      state_topic: collectd/OpenWrt/load/load
+      value_template: "{{ value.split(':')[3].split('\x00')[0] | float }}"
+      unique_id: L15
+
+   # wan interface
+    - name: OpenWRT wan errors
+      state_topic: collectd/OpenWrt/interface-wlan0/if_errors
+      unit_of_measurement: packets
+      value_template: "{{ value.split(':')[1] | int + value.split(':')[2].split('\x00')[0] | int }}"
+      unique_id: br-wan-errors
+    - name: OpenWRT wan dropped
+      state_topic: collectd/OpenWrt/interface-wlan0/if_dropped
+      unit_of_measurement: packets
+      value_template: "{{ value.split(':')[1] | int + value.split(':')[2].split('\x00')[0] | int }}"
+      unique_id: br-wan-dropped
+    - name: OpenWRT wan TX Mbits
+      state_topic: collectd/OpenWrt/interface-wlan0/if_octets
+      unit_of_measurement: Mbits
+      value_template: "{{ value.split(':')[2].split('\x00')[0] | float * 8 / 1048576 }}"
+      unique_id: br-wan-tx-transfer
+    - name: OpenWRT wan RX Mbits
+      state_topic: collectd/OpenWrt/interface-wlan0/if_octets
+      unit_of_measurement: Mbits
+      value_template: "{{ value.split(':')[1] | float * 8 / 1048576 }}"
+      unique_id: br-wan-rx-transfer
+    - name: OpenWRT wan packets
+      state_topic: collectd/OpenWrt/interface-wlan0/if_packets
+      unit_of_measurement: packets/s
+      value_template: "{{ value.split(':')[1] | int + value.split(':')[2].split('\x00')[0] | int }}"
+      unique_id: br-wan-packets
+
+    # connections
+    - name: OpenWRT connections
+      state_topic: collectd/OpenWrt/conntrack/conntrack
+      unit_of_measurement: connections
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | int }}"
+      unique_id: connections
+      
+    # uptime
+    - name: OpenWRT uptime
+      state_topic: collectd/OpenWrt/uptime/uptime
+      unit_of_measurement: days
+      value_template: "{{ value.split(':')[1].split('\x00')[0] | int / 86400 | round(2) }}"
+      unique_id: ap_uptime
+
+    # wifi main
+    - name: wireless_connected_clients_openwrt_iot
+      state_topic: collectd/OpenWrt/iwinfo-wlan0/stations
+#      unit_of_measurement: clients
+      value_template: "{{ (value.split(':')[1].split('\x00')[0] | int) if value else 0 }}"
+      unique_id: wireless_connected_clients_openwrt_iot
+      force_update: true
+    - name: OpenWRT 2.4G TX Mbits
+      state_topic: collectd/OpenWrt/interface-wlan0-1/if_octets
+      unit_of_measurement: Mbits
+      value_template: "{{ value.split(':')[1] | float * 8 / 1048576 }}"
+      unique_id: iwinfo-iot-tx-transfer
+    - name: OpenWRT 2.4G RX Mbits
+      state_topic: collectd/OpenWrt/interface-wlan0-1/if_octets
+      unit_of_measurement: Mbits
+      value_template: "{{ value.split(':')[2].split('\x00')[0] | float * 8 / 1048576 }}"
+      unique_id: iwinfo-iot-rx-transfer
+      
+    - name: "Dispositivos Zigbee Online (estimado)"
+      state_topic: "zigbee2mqtt/bridge/devices"
+      unit_of_measurement: ""
+      value_template: >
+        {% set devices = value_json
+           | selectattr('disabled', 'eq', False)
+           | selectattr('type', 'ne', 'Coordinator')
+           | list | count %}
+        {{ devices }}
+climate:
+  - platform: generic_thermostat
+    name: Aquecedoer suite
+    heater: switch.tomada_comoda_socket1
+    target_sensor: sensor.temp_suite
+    min_temp: 14
+    max_temp: 24
+    ac_mode: false
+    target_temp: 17
+    cold_tolerance: 0.3
+    hot_tolerance: 0
     min_cycle_duration:
       seconds: 30
     keep_alive:
       minutes: 3
-    initial_state: true
-    away_humidity: 35
-    away_fixed: True
-    sensor_stale_duration: 00:15:00
+    initial_hvac_mode: "off"
+    away_temp: 16
+    precision: 0.1
 
-  - name: umidificador_escritorio
-    humidifier: switch.sonoff_100049e5fc
-    target_sensor: sensor.sonoff_1000af0421_humidity
-    min_humidity: 30
-    max_humidity: 70
-    target_humidity: 50
-    dry_tolerance: 3
-    wet_tolerance: 0
-    device_class: "humidifier"
-    min_cycle_duration:
-      seconds: 30
-    keep_alive:
-      minutes: 3
-    initial_state: true
-    away_humidity: 35
-    away_fixed: True
-    sensor_stale_duration: 00:15:00
-
-utility_meter:
-  kwh_gasto_mes_ac_suite:
-    source: sensor.suite_energy_current
-    cycle: monthly
-  kwh_gasto_mes_ac_escritorio:
-    source: sensor.escritorio_energy_current
-    cycle: monthly
-  kwh_gasto_mes_casa:
-    unique_id: kwh_gasto_mes_casa
-    source: sensor.total_power
-    cycle: monthly
-        
