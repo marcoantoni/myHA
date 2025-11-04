@@ -54,5 +54,5 @@ Componentes instalados manualmente, dentro da pasta ``config\custom_components``
 - [Integrando o OpenWRT ao Home Assistant](https://jonbrito.dev/articles/openwrt-mqtt-ha)
 
 ## Interface em 04/11/2025
-![Alt text](prints/Captura de tela 2025-11-04 150727.png?raw=true "Interface principal")
+![Alt text](prints/Captura%20de%20tela%202025-11-04%20150727.png?raw=true "Interface principal")
 
